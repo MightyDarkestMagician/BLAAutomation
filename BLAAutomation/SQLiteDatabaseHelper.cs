@@ -1,27 +1,90 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Data;
+using System.Data.SQLite;
 
-public static class SQLiteDatabaseHelper
+namespace BLAAutomation
 {
-    private static string dbFileName = "ProjectDatabase.db";
-
-    public static SQLiteConnection ConnectToDatabase()
+    public static class SQLiteDatabaseHelper
     {
-        var connectionString = $"Data Source={dbFileName}; Version=3;";
-        SQLiteConnection connection = new SQLiteConnection(connectionString);
-        connection.Open();
-        return connection;
-    }
+        public const string SQLiteConnString = @"Data Source=ProjectDB; Version=3;";
 
-    public static void InitializeDatabase()
-    {
-        using (var conn = ConnectToDatabase())
+        public static DataSet SQLiteCommandSelectAllFrom(SQLiteConnection sqliteConn, string TableName)
         {
-            string sql = @"CREATE TABLE IF NOT EXISTS Projects (
-                             ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-                             Name TEXT NOT NULL
-                           );";
-            SQLiteCommand command = new SQLiteCommand(sql, conn);
+            sqliteConn.Open();
+            DataSet dataSet = new DataSet();
+            string SqlCommand = "SELECT * FROM " + TableName;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(SqlCommand, sqliteConn);
+            adapter.Fill(dataSet);
+            sqliteConn.Close();
+            return dataSet;
+        }
+
+        public static DataSet SQLiteCustomCommandSelect(SQLiteConnection sqliteConn, string query)
+        {
+            sqliteConn.Open();
+            DataSet dataSet = new DataSet();
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, sqliteConn);
+            adapter.Fill(dataSet);
+            sqliteConn.Close();
+            return dataSet;
+        }
+
+        public static DataSet SQLiteCommandSelectWithCustomCondition(SQLiteConnection sqliteConn, string TableName, string Condition)
+        {
+            sqliteConn.Open();
+            DataSet dataSet = new DataSet();
+            string SqlCommand = "SELECT * FROM " + TableName + " WHERE " + Condition;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(SqlCommand, sqliteConn);
+            adapter.Fill(dataSet);
+            sqliteConn.Close();
+            return dataSet;
+        }
+
+        public static void SQLiteCommandInsertInto(SQLiteConnection sqliteConn, string TableName, string[] ColumnsName, string[] ColumnsValue)
+        {
+            sqliteConn.Open();
+            string SqlCommand = "INSERT INTO " + TableName + "(";
+            for (int i = 0; i < ColumnsName.Length - 1; i++)
+            {
+                SqlCommand += "'" + ColumnsName[i] + "', ";
+            }
+            SqlCommand += "'" + ColumnsName[ColumnsName.Length - 1] + "') VALUES (";
+            for (int i = 0; i < ColumnsValue.Length - 1; i++)
+            {
+                SqlCommand += "'" + ColumnsValue[i] + "', ";
+            }
+            SqlCommand += "'" + ColumnsValue[ColumnsValue.Length - 1] + "')";
+            SQLiteCommand command = new SQLiteCommand(SqlCommand, sqliteConn);
             command.ExecuteNonQuery();
+            sqliteConn.Close();
+        }
+
+        public static void SQLiteCommandDeleteFrom(SQLiteConnection sqliteConn, string TableName, string Where)
+        {
+            sqliteConn.Open();
+            string SqlCommand = "DELETE FROM " + TableName + " " + Where;
+            SQLiteCommand command = new SQLiteCommand(SqlCommand, sqliteConn);
+            command.ExecuteNonQuery();
+            sqliteConn.Close();
+        }
+
+        public static int GetLastId(SQLiteConnection sqliteConn, string TableName)
+        {
+            sqliteConn.Open();
+            int id = 0;
+            string SqlCommand = "SELECT Max(Id) FROM " + TableName + ";";
+            DataSet dataSet = new DataSet();
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(SqlCommand, sqliteConn);
+            adapter.Fill(dataSet);
+            if (dataSet.Tables[0].Rows[0][0] != null)
+            {
+                if (dataSet.Tables[0].Rows[0][0].ToString() != "" && dataSet.Tables[0].Rows[0][0].ToString() != "0" && dataSet.Tables[0].Rows[0][0].ToString() != "NULL")
+                {
+                    id = int.Parse(dataSet.Tables[0].Rows[0][0].ToString());
+                }
+            }
+            sqliteConn.Close();
+            return id;
         }
     }
 }
