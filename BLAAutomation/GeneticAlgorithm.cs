@@ -24,6 +24,7 @@ namespace BLAAutomation
         private int _geneLength;
         private List<Individual> _population;
         private Random _random;
+        private Project _project;
 
         public GeneticAlgorithm(int populationSize, int generations, double mutationRate, double crossoverRate, int geneLength)
         {
@@ -34,6 +35,7 @@ namespace BLAAutomation
             _geneLength = geneLength;
             _population = new List<Individual>();
             _random = new Random();
+            _project = new Project(); // Инициализация проекта
         }
 
         public void InitializePopulation()
@@ -135,6 +137,12 @@ namespace BLAAutomation
         public Individual GetBestIndividual()
         {
             return _population.OrderByDescending(ind => ind.Fitness).FirstOrDefault();
+        }
+
+        // Добавим метод для получения проекта
+        public Project GetProject()
+        {
+            return _project;
         }
     }
 }

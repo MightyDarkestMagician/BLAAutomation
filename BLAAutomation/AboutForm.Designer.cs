@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "AboutForm";
             this.Text = "AboutForm";
+            this.Load += new System.EventHandler(this.AboutForm_Load);
             this.ResumeLayout(false);
 
         }

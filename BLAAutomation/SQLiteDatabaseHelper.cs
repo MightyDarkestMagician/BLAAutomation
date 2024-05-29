@@ -7,6 +7,55 @@ namespace BLAAutomation
     public static class SQLiteDatabaseHelper
     {
         public const string SQLiteConnString = @"Data Source=ProjectDB; Version=3;";
+        private static string _databasePath = "Data Source=BLAAutomation.db";
+
+        public static SQLiteConnection ConnectToDatabase()
+        {
+            return new SQLiteConnection(_databasePath);
+        }
+
+        public static void InitializeDatabase()
+        {
+            using (var conn = ConnectToDatabase())
+            {
+                conn.Open();
+                string sql = @"
+                CREATE TABLE IF NOT EXISTS Projects (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS Compartments (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProjectId INTEGER,
+                    CoordinateX REAL,
+                    CoordinateY REAL,
+                    Length REAL,
+                    Width REAL,
+                    FOREIGN KEY (ProjectId) REFERENCES Projects(Id)
+                );
+
+                CREATE TABLE IF NOT EXISTS Positions (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProjectId INTEGER,
+                    CoordinateX REAL,
+                    CoordinateY REAL,
+                    FOREIGN KEY (ProjectId) REFERENCES Projects(Id)
+                );
+
+                CREATE TABLE IF NOT EXISTS Antennas (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProjectId INTEGER,
+                    CoordinateX REAL,
+                    CoordinateY REAL,
+                    FOREIGN KEY (ProjectId) REFERENCES Projects(Id)
+                );";
+
+                SQLiteCommand command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+            }
+        }
+
 
         public static DataSet SQLiteCommandSelectAllFrom(SQLiteConnection sqliteConn, string TableName)
         {

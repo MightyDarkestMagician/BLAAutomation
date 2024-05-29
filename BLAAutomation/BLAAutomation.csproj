@@ -80,8 +80,23 @@
     <Compile Include="AlgorithmForm.Designer.cs">
       <DependentUpon>AlgorithmForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AlgorithmSettingsForm.cs" />
+    <Compile Include="Antenna.cs" />
+    <Compile Include="AntennaInFuselage.cs" />
+    <Compile Include="Antennas.cs" />
+    <Compile Include="Compartment.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="Devices.cs" />
     <Compile Include="DrawScheme.cs" />
+    <Compile Include="Fuselage.cs" />
+    <Compile Include="Fuselages.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
+    <Compile Include="NewAntenna.cs" />
+    <Compile Include="NewDevice.cs" />
+    <Compile Include="NewFuselage.cs" />
+    <Compile Include="NewProject.cs" />
+    <Compile Include="Position.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="SQLiteDatabaseHelper.cs" />
     <Compile Include="DataForm.cs">
       <SubType>Form</SubType>
