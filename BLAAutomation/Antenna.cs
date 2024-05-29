@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Data;
 using System.Data.SQLite;
-using System.Xml.Linq;
 
 namespace BLAAutomation
 {
     public class Antenna : BasicObject
     {
-        internal double Length { get; set; }
-        internal double Amperage { get; set; }
-        internal double Power { get; set; }
-        internal double Frequency { get; set; }
+        public double Length { get; set; }
+        public double Amperage { get; set; }
+        public double Power { get; set; }
+        public double Frequency { get; set; }
 
         public Antenna(int id, SQLiteConnection connection) : base(id)
         {
@@ -32,6 +31,19 @@ namespace BLAAutomation
                 antennas[i] = new Antenna(int.Parse(row["Id"].ToString()), connection);
             }
             return antennas;
+        }
+
+        public static void AddAntenna(SQLiteConnection connection, string name, double length, double amperage, double power, double frequency)
+        {
+            string[] columns = { "Name", "Length", "Amperage", "Power", "Frequency" };
+            string[] values = { name, length.ToString(), amperage.ToString(), power.ToString(), frequency.ToString() };
+            SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Antenna", columns, values);
+        }
+
+        public static void RemoveAntenna(SQLiteConnection connection, int idAntenna)
+        {
+            string whereClause = $"WHERE Id = {idAntenna}";
+            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "Antenna", whereClause);
         }
     }
 }

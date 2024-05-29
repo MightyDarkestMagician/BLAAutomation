@@ -93,7 +93,9 @@
     <Compile Include="Fuselage.cs" />
     <Compile Include="Fuselages.cs" />
     <Compile Include="GeneticAlgorithm.cs" />
-    <Compile Include="NewAntenna.cs" />
+    <Compile Include="NewAntenna.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="NewDevice.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewAntenna.resx">
+      <DependentUpon>NewAntenna.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectForm.resx">
       <DependentUpon>ProjectForm.cs</DependentUpon>
