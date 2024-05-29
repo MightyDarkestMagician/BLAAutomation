@@ -61,8 +61,9 @@ namespace BLAAutomation
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.dataGridViewDevices = new System.Windows.Forms.DataGridView();
-            this.contextMenuStripDevices = new System.Windows.Forms.ContextMenuStrip();
+            this.contextMenuStripDevices = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.AddDeviceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DeleteDeviceMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDevices)).BeginInit();
@@ -76,7 +77,7 @@ namespace BLAAutomation
             this.dataGridViewDevices.Location = new System.Drawing.Point(12, 78);
             this.dataGridViewDevices.Name = "dataGridViewDevices";
             this.dataGridViewDevices.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewDevices.Size = new System.Drawing.Size(776, 360);
+            this.dataGridViewDevices.Size = new System.Drawing.Size(484, 211);
             this.dataGridViewDevices.TabIndex = 0;
             // 
             // contextMenuStripDevices
@@ -85,25 +86,25 @@ namespace BLAAutomation
             this.AddDeviceMenuItem,
             this.DeleteDeviceMenuItem});
             this.contextMenuStripDevices.Name = "contextMenuStripDevices";
-            this.contextMenuStripDevices.Size = new System.Drawing.Size(181, 70);
+            this.contextMenuStripDevices.Size = new System.Drawing.Size(146, 48);
             // 
             // AddDeviceMenuItem
             // 
             this.AddDeviceMenuItem.Name = "AddDeviceMenuItem";
-            this.AddDeviceMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.AddDeviceMenuItem.Size = new System.Drawing.Size(145, 22);
             this.AddDeviceMenuItem.Text = "Add Device";
             this.AddDeviceMenuItem.Click += new System.EventHandler(this.AddDeviceMenuItem_Click);
             // 
             // DeleteDeviceMenuItem
             // 
             this.DeleteDeviceMenuItem.Name = "DeleteDeviceMenuItem";
-            this.DeleteDeviceMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.DeleteDeviceMenuItem.Size = new System.Drawing.Size(145, 22);
             this.DeleteDeviceMenuItem.Text = "Delete Device";
             this.DeleteDeviceMenuItem.Click += new System.EventHandler(this.DeleteDeviceMenuItem_Click);
             // 
             // Devices
             // 
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(508, 301);
             this.Controls.Add(this.dataGridViewDevices);
             this.Name = "Devices";
             this.Text = "Devices";
@@ -117,6 +118,7 @@ namespace BLAAutomation
         private System.Windows.Forms.DataGridView dataGridViewDevices;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripDevices;
         private System.Windows.Forms.ToolStripMenuItem AddDeviceMenuItem;
+        private System.ComponentModel.IContainer components;
         private System.Windows.Forms.ToolStripMenuItem DeleteDeviceMenuItem;
     }
 }

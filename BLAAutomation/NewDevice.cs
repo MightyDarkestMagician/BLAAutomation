@@ -118,7 +118,7 @@ namespace BLAAutomation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(282, 364);
             this.Controls.Add(this.buttonAddDevice);
             this.Controls.Add(this.textBoxNoiseImmunity);
             this.Controls.Add(this.textBoxWeight);
@@ -126,7 +126,6 @@ namespace BLAAutomation
             this.Name = "NewDevice";
             this.Text = "New Device";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

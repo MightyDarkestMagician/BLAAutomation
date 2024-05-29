@@ -34,7 +34,7 @@
             // buttonOpenAlgorithmForm
             // 
             this.buttonOpenAlgorithmForm.Depth = 0;
-            this.buttonOpenAlgorithmForm.Location = new System.Drawing.Point(12, 89);
+            this.buttonOpenAlgorithmForm.Location = new System.Drawing.Point(12, 129);
             this.buttonOpenAlgorithmForm.MouseState = MaterialSkin.MouseState.HOVER;
             this.buttonOpenAlgorithmForm.Name = "buttonOpenAlgorithmForm";
             this.buttonOpenAlgorithmForm.Primary = true;
@@ -48,7 +48,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(460, 248);
             this.Controls.Add(this.buttonOpenAlgorithmForm);
             this.Name = "MainForm";
             this.Text = "MainForm";

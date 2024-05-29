@@ -3,6 +3,17 @@ using System.Data.SQLite;
 
 namespace BLAAutomation
 {
+    public class BasicObject
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public BasicObject(int id)
+        {
+            Id = id;
+        }
+    }
+
     public class Project
     {
         public List<Compartment> Compartments { get; set; }

@@ -108,20 +108,21 @@
             this.buttonRunAlgorithm.UseVisualStyleBackColor = true;
             this.buttonRunAlgorithm.Click += new System.EventHandler(this.buttonRunAlgorithm_Click);
             // 
-            // AlgorithmForm
+            // AlgorithmSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(492, 284);
             this.Controls.Add(this.buttonRunAlgorithm);
             this.Controls.Add(this.textBoxCrossoverRate);
             this.Controls.Add(this.textBoxMutationRate);
             this.Controls.Add(this.textBoxGenerations);
             this.Controls.Add(this.textBoxPopulationSize);
-            this.Name = "AlgorithmForm";
+            this.Name = "AlgorithmSettingsForm";
             this.Text = "AlgorithmForm";
             this.Load += new System.EventHandler(this.AlgorithmForm_Load);
             this.ResumeLayout(false);
+
         }
 
         #endregion
