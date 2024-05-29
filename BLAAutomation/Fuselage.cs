@@ -1,5 +1,4 @@
-﻿using BLAAutomation.Objects;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
@@ -8,58 +7,45 @@ namespace BLAAutomation
 {
     public class Fuselage : BasicObject
     {
-        public AntennaInFuselage[] AntennasForFuselage { get; set; }
-        public Compartment[] CompartmentsForFuselage { get; set; }
-        public Position[] PositionsForFuselage { get; set; }
+        public AntennaInFuselage[] AntennasForFuselage { get; private set; }
+        public Compartment[] CompartmentsForFuselage { get; private set; }
+        public Position[] PositionsForFuselage { get; private set; }
 
-        public double[,] Distances { get; set; }
-        public double[,] E { get; set; }
+        public double[,] Distances { get; private set; }
+        public double[,] E { get; private set; }
 
         public Fuselage(int id, SQLiteConnection connection) : base(id)
         {
-            DataSet dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Fuselage", "Id = " + id.ToString() + ";");
+            var dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Fuselage", "Id = " + id + ";");
             Name = dataSetObject.Tables[0].Rows[0]["Name"].ToString();
             AntennasForFuselage = AntennaInFuselage.GetAntennasForFuselage(connection, id);
             CompartmentsForFuselage = Compartment.GetCompartmentsForFuselage(connection, id);
             PositionsForFuselage = Position.GetPositionsForFuselage(connection, id);
 
-            CalculateDistancesAndEFields();
+            CalculateDistancesAndFields();
         }
 
-        public static Fuselage[] GetFuselages(SQLiteConnection connection)
+        private void CalculateDistancesAndFields()
         {
-            DataSet dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Fuselage");
-            Fuselage[] fuselages = new Fuselage[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
-            {
-                fuselages[i] = new Fuselage(int.Parse(dataSetObjects.Tables[0].Rows[i]["Id"].ToString()), connection);
-            }
-            return fuselages;
-        }
-
-        private void CalculateDistancesAndEFields()
-        {
-            double c = 299792458.0;
-            double eps = 1.0;
+            const double c = 299792458.0;
+            const double eps = 1.0;
 
             Distances = new double[AntennasForFuselage.Length, CompartmentsForFuselage.Length];
             E = new double[AntennasForFuselage.Length, CompartmentsForFuselage.Length];
+
             for (int i = 0; i < AntennasForFuselage.Length; i++)
             {
-                AntennaInFuselage ant = AntennasForFuselage[i];
+                var ant = AntennasForFuselage[i];
                 for (int j = 0; j < CompartmentsForFuselage.Length; j++)
                 {
-                    Compartment cmp = CompartmentsForFuselage[j];
-                    Distances[i, j] = Math.Sqrt(
-                        Math.Pow(cmp.CoordinateX - ant.CoordinateX, 2) +
-                        Math.Pow(cmp.CoordinateY - ant.CoordinateY, 2) +
-                        Math.Pow(cmp.CoordinateZ - ant.CoordinateZ, 2)
-                    );
+                    var cmp = CompartmentsForFuselage[j];
+                    Distances[i, j] = Math.Sqrt(Math.Pow(cmp.CoordinateX - ant.CoordinateX, 2) +
+                                                Math.Pow(cmp.CoordinateY - ant.CoordinateY, 2) +
+                                                Math.Pow(cmp.CoordinateZ - ant.CoordinateZ, 2));
                     double toCheck = c / (2.0 * Math.PI * ant.Antenna.Frequency);
                     if (Distances[i, j] < toCheck)
                     {
-                        E[i, j] = (ant.Antenna.Amperage * ant.Antenna.Length) /
-                                  (4.0 * Math.PI * Math.PI * eps * ant.Antenna.Frequency * Distances[i, j] * Distances[i, j]);
+                        E[i, j] = (ant.Antenna.Amperage * ant.Antenna.Length) / (4.0 * Math.PI * Math.PI * eps * ant.Antenna.Frequency * Math.Pow(Distances[i, j], 2));
                     }
                     else
                     {
@@ -68,14 +54,21 @@ namespace BLAAutomation
                 }
             }
 
-            foreach (var compartment in CompartmentsForFuselage)
+            foreach (var cmp in CompartmentsForFuselage)
             {
-                compartment.E = 0;
-                for (int j = 0; j < AntennasForFuselage.Length; j++)
-                {
-                    compartment.E += E[j, CompartmentsForFuselage.ToList().IndexOf(compartment)];
-                }
+                cmp.E = AntennasForFuselage.Sum(ant => E[Array.IndexOf(AntennasForFuselage, ant), Array.IndexOf(CompartmentsForFuselage, cmp)]);
             }
+        }
+
+        public static Fuselage[] GetFuselages(SQLiteConnection connection)
+        {
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Fuselage");
+            var fuselages = new Fuselage[dataSetObjects.Tables[0].Rows.Count];
+            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
+            {
+                fuselages[i] = new Fuselage(int.Parse(dataSetObjects.Tables[0].Rows[i]["Id"].ToString()), connection);
+            }
+            return fuselages;
         }
 
         public static void AddFuselage(SQLiteConnection connection, string name)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data.SQLite;
 
 namespace BLAAutomation
 {
@@ -13,6 +14,13 @@ namespace BLAAutomation
             Compartments = new List<Compartment>();
             Positions = new List<Position>();
             Antennas = new List<AntennaPosition>();
+        }
+
+        public static void AddProject(SQLiteConnection connection, string name, int fuselageId)
+        {
+            string[] columns = { "Name", "Id_Fuselage" };
+            string[] values = { name, fuselageId.ToString() };
+            SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Project", columns, values);
         }
     }
 
