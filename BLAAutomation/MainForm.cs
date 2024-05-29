@@ -31,7 +31,7 @@ namespace BLAAutomation
 
         private void алгоритмToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AlgorithmForm algorithmForm = new AlgorithmForm();
+            AlgorithmSettingsForm algorithmForm = new AlgorithmSettingsForm();
             algorithmForm.Show();
         }
 
@@ -43,7 +43,7 @@ namespace BLAAutomation
 
         private void buttonOpenAlgorithmForm_Click(object sender, EventArgs e)
         {
-            AlgorithmForm algorithmForm = new AlgorithmForm();
+            AlgorithmSettingsForm algorithmForm = new AlgorithmSettingsForm();
             algorithmForm.Show();
         }
     }

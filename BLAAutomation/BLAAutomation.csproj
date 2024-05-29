@@ -74,16 +74,16 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="AlgorithmForm.cs">
+    <Compile Include="AlgorithmSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AlgorithmForm.Designer.cs">
-      <DependentUpon>AlgorithmForm.cs</DependentUpon>
+    <Compile Include="AlgorithmSettingsForm.Designer.cs">
+      <DependentUpon>AlgorithmSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="AlgorithmSettingsForm.cs" />
     <Compile Include="Antenna.cs" />
     <Compile Include="AntennaInFuselage.cs" />
     <Compile Include="Antennas.cs" />
+    <Compile Include="BasicObject.cs" />
     <Compile Include="Compartment.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Devices.cs" />
@@ -121,8 +121,8 @@
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AlgorithmForm.resx">
-      <DependentUpon>AlgorithmForm.cs</DependentUpon>
+    <EmbeddedResource Include="AlgorithmSettingsForm.resx">
+      <DependentUpon>AlgorithmSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataForm.resx">
       <DependentUpon>DataForm.cs</DependentUpon>

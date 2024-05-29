@@ -1,6 +1,6 @@
 ﻿namespace BLAAutomation
 {
-    partial class AlgorithmForm
+    partial class AlgorithmSettingsForm
     {
         /// <summary>
         /// Required designer variable.
