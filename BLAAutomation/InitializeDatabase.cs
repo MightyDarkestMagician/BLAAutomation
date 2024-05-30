@@ -1,15 +1,14 @@
-﻿using System;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using System.IO;
+using System;
 
 public class DatabaseInitializer
 {
     public static void InitializeDatabase()
     {
-        string databaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+        string databaseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\App_Data");
         string databasePath = Path.Combine(databaseDirectory, "blaautomation.db");
 
-        // Создаем директорию, если она не существует
         if (!Directory.Exists(databaseDirectory))
         {
             Directory.CreateDirectory(databaseDirectory);
@@ -83,6 +82,18 @@ public class DatabaseInitializer
                 using (var command = new SQLiteCommand(query, connection))
                 {
                     command.ExecuteNonQuery();
+                }
+            }
+
+            // Проверка создания таблиц
+            using (var command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table';", connection))
+            {
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine("Table: " + reader["name"]);
+                    }
                 }
             }
         }

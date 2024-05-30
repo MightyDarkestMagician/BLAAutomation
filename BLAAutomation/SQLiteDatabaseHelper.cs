@@ -7,7 +7,8 @@ namespace BLAAutomation
 {
     public static class SQLiteDatabaseHelper
     {
-        private static string _databasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "blaautomation.db");
+        // Изменяем путь к базе данных на относительно проекта
+        private static string _databasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\App_Data", "blaautomation.db");
 
         public static SQLiteConnection ConnectToDatabase()
         {

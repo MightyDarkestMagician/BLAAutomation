@@ -22,10 +22,10 @@ namespace BLAAutomation
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
 
-            _connectionString = SQLiteDatabaseHelper.GetConnectionString(); // Изменение для получения строки подключения
+            _connectionString = SQLiteDatabaseHelper.GetConnectionString();
 
-            InitializeDatabase();           // Инициализация базы данных
-            LoadProject();                  // Загрузка проекта
+            InitializeDatabase(); // Убедитесь, что база данных инициализируется
+            LoadProject(); // Загрузка проекта
         }
 
         private void InitializeDatabase()
@@ -44,10 +44,10 @@ namespace BLAAutomation
         private void LoadProject()
         {
             // Логика загрузки проекта
-            using (var connection = SQLiteDatabaseHelper.ConnectToDatabase())
+            using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
-                _currentProject = Project.GetAllProjects(connection).FirstOrDefault(); // Исправлено: Добавлен метод FirstOrDefault
+                _currentProject = Project.GetAllProjects(connection).FirstOrDefault();
             }
         }
 
