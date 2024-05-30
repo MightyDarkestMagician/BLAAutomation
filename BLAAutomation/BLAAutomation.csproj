@@ -76,6 +76,8 @@
     </Compile>
     <Compile Include="Antenna.cs" />
     <Compile Include="AntennaInFuselage.cs" />
+    <Compile Include="AntennaPosition.cs" />
+    <Compile Include="BasicObject.cs" />
     <Compile Include="Compartment.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Devices.cs">
@@ -151,6 +153,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="NewProject.resx">
       <DependentUpon>NewProject.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Project.resx">
+      <DependentUpon>Project.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectForm.resx">
       <DependentUpon>ProjectForm.cs</DependentUpon>

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Data.SQLite;
 using System.Data;
-using System.Data.SQLite;
 
 namespace BLAAutomation
 {
@@ -55,7 +54,6 @@ namespace BLAAutomation
                 command.ExecuteNonQuery();
             }
         }
-
 
         public static DataSet SQLiteCommandSelectAllFrom(SQLiteConnection sqliteConn, string TableName)
         {

@@ -18,8 +18,8 @@ namespace BLAAutomation
             var dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Fuselage", "Id = " + id + ";");
             Name = dataSetObject.Tables[0].Rows[0]["Name"].ToString();
             AntennasForFuselage = AntennaInFuselage.GetAntennasForFuselage(connection, id);
-            CompartmentsForFuselage = Compartment.GetCompartmentsForFuselage(connection, id);
-            PositionsForFuselage = Position.GetPositionsForFuselage(connection, id);
+            CompartmentsForFuselage = Compartment.GetCompartmentsForFuselage(connection, id).ToArray();
+            PositionsForFuselage = Position.GetPositionsForFuselage(connection, id).ToArray();
 
             CalculateDistancesAndFields();
         }

@@ -1,21 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 
 namespace BLAAutomation
 {
-    public class BasicObject
+    public class Project
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
-        public BasicObject(int id)
-        {
-            Id = id;
-        }
-    }
-
-    public class Project
-    {
         public List<Compartment> Compartments { get; set; }
         public List<Position> Positions { get; set; }
         public List<AntennaPosition> Antennas { get; set; }
@@ -33,13 +26,29 @@ namespace BLAAutomation
             string[] values = { name, fuselageId.ToString() };
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Project", columns, values);
         }
-    }
 
-    public class AntennaPosition
-    {
-        public int Id { get; set; }
-        public double CoordinateX { get; set; }
-        public double CoordinateY { get; set; }
-        public double CoordinateZ { get; set; }
+        public static List<Project> GetAllProjects(SQLiteConnection connection)
+        {
+            var projects = new List<Project>();
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Project");
+
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
+            {
+                var project = new Project
+                {
+                    Id = int.Parse(row["Id"].ToString()),
+                    Name = row["Name"].ToString()
+                };
+
+                // Загрузка отсеков, позиций и антенн для проекта
+                project.Compartments = Compartment.GetCompartmentsForProject(connection, project.Id);
+                project.Positions = Position.GetPositionsForProject(connection, project.Id);
+                project.Antennas = AntennaPosition.GetAntennasForProject(connection, project.Id);
+
+                projects.Add(project);
+            }
+
+            return projects;
+        }
     }
 }

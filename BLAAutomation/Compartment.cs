@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
@@ -14,7 +15,7 @@ namespace BLAAutomation
         public double Width { get; set; }
         public double Height { get; set; }
         public double Carrying { get; set; }
-        public double E { get; set; } // Добавлено свойство E
+        public double E { get; set; } // Adding the missing property
 
         public Compartment(int id, double coordinateX, double coordinateY, double coordinateZ, double length, double width, double height, double carrying)
         {
@@ -26,17 +27,17 @@ namespace BLAAutomation
             Width = width;
             Height = height;
             Carrying = carrying;
-            E = 0; // Инициализация E
+            E = 0; // Initializing the missing property
         }
 
-        public static Compartment[] GetCompartmentsForFuselage(SQLiteConnection connection, int idFuselage)
+        public static List<Compartment> GetCompartmentsForFuselage(SQLiteConnection connection, int fuselageId)
         {
-            DataSet dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "CompartmentsInFuselage", "Id_Fuselage = " + idFuselage.ToString() + ";");
-            Compartment[] compartments = new Compartment[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
+            var compartments = new List<Compartment>();
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "CompartmentsInFuselage", $"Id_Fuselage = {fuselageId}");
+
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
             {
-                DataRow row = dataSetObjects.Tables[0].Rows[i];
-                compartments[i] = new Compartment(
+                var compartment = new Compartment(
                     int.Parse(row["Id"].ToString()),
                     double.Parse(row["CoordinateX"].ToString()),
                     double.Parse(row["CoordinateY"].ToString()),
@@ -46,20 +47,45 @@ namespace BLAAutomation
                     double.Parse(row["Height"].ToString()),
                     double.Parse(row["Carrying"].ToString())
                 );
+                compartments.Add(compartment);
             }
+
             return compartments;
         }
 
-        public static void AddCompartmentToFuselage(SQLiteConnection connection, int idFuselage, double coordinateX, double coordinateY, double coordinateZ, double length, double width, double height, double carrying)
+        public static List<Compartment> GetCompartmentsForProject(SQLiteConnection connection, int projectId)
+        {
+            var compartments = new List<Compartment>();
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "CompartmentsInProject", $"ProjectId = {projectId}");
+
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
+            {
+                var compartment = new Compartment(
+                    int.Parse(row["Id"].ToString()),
+                    double.Parse(row["CoordinateX"].ToString()),
+                    double.Parse(row["CoordinateY"].ToString()),
+                    double.Parse(row["CoordinateZ"].ToString()),
+                    double.Parse(row["Length"].ToString()),
+                    double.Parse(row["Width"].ToString()),
+                    double.Parse(row["Height"].ToString()),
+                    double.Parse(row["Carrying"].ToString())
+                );
+                compartments.Add(compartment);
+            }
+
+            return compartments;
+        }
+
+        public static void AddCompartmentToFuselage(SQLiteConnection connection, int fuselageId, double coordinateX, double coordinateY, double coordinateZ, double length, double width, double height, double carrying)
         {
             string[] columns = { "Id_Fuselage", "CoordinateX", "CoordinateY", "CoordinateZ", "Length", "Width", "Height", "Carrying" };
-            string[] values = { idFuselage.ToString(), coordinateX.ToString(), coordinateY.ToString(), coordinateZ.ToString(), length.ToString(), width.ToString(), height.ToString(), carrying.ToString() };
+            string[] values = { fuselageId.ToString(), coordinateX.ToString(), coordinateY.ToString(), coordinateZ.ToString(), length.ToString(), width.ToString(), height.ToString(), carrying.ToString() };
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "CompartmentsInFuselage", columns, values);
         }
 
-        public static void RemoveCompartmentFromFuselage(SQLiteConnection connection, int idFuselage, int idCompartment)
+        public static void RemoveCompartmentFromFuselage(SQLiteConnection connection, int fuselageId, int compartmentId)
         {
-            string whereClause = $"WHERE Id_Fuselage = {idFuselage} AND Id_Compartment = {idCompartment}";
+            string whereClause = $"WHERE Id_Fuselage = {fuselageId} AND Id = {compartmentId}";
             SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "CompartmentsInFuselage", whereClause);
         }
     }

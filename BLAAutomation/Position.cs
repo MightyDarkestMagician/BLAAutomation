@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 
@@ -21,35 +22,44 @@ namespace BLAAutomation
             CompartmentId = compartmentId;
         }
 
-        public static Position[] GetPositionsForFuselage(SQLiteConnection connection, int idFuselage)
+        public static List<Position> GetPositionsForFuselage(SQLiteConnection connection, int fuselageId)
         {
-            DataSet dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "PositionsForPlacement", "Id_Fuselage = " + idFuselage + ";");
-            Position[] positions = new Position[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
+            var positions = new List<Position>();
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "PositionsForPlacement", $"Id_Fuselage = {fuselageId}");
+
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
             {
-                DataRow row = dataSetObjects.Tables[0].Rows[i];
-                positions[i] = new Position(
+                var position = new Position(
                     int.Parse(row["Id"].ToString()),
                     double.Parse(row["CoordinateX"].ToString()),
                     double.Parse(row["CoordinateY"].ToString()),
                     double.Parse(row["CoordinateZ"].ToString()),
                     int.Parse(row["CompartmentId"].ToString())
                 );
+                positions.Add(position);
             }
+
             return positions;
         }
 
-        public static void AddPositionToFuselage(SQLiteConnection connection, int idFuselage, double coordinateX, double coordinateY, double coordinateZ, int compartmentId)
+        public static List<Position> GetPositionsForProject(SQLiteConnection connection, int projectId)
         {
-            string[] columns = { "Id_Fuselage", "CoordinateX", "CoordinateY", "CoordinateZ", "CompartmentId" };
-            string[] values = { idFuselage.ToString(), coordinateX.ToString(), coordinateY.ToString(), coordinateZ.ToString(), compartmentId.ToString() };
-            SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "PositionsForPlacement", columns, values);
-        }
+            var positions = new List<Position>();
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "PositionsForProject", $"ProjectId = {projectId}");
 
-        public static void RemovePositionFromFuselage(SQLiteConnection connection, int idFuselage, int idPosition)
-        {
-            string whereClause = $"WHERE Id_Fuselage = {idFuselage} AND Id = {idPosition}";
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "PositionsForPlacement", whereClause);
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
+            {
+                var position = new Position(
+                    int.Parse(row["Id"].ToString()),
+                    double.Parse(row["CoordinateX"].ToString()),
+                    double.Parse(row["CoordinateY"].ToString()),
+                    double.Parse(row["CoordinateZ"].ToString()),
+                    int.Parse(row["CompartmentId"].ToString())
+                );
+                positions.Add(position);
+            }
+
+            return positions;
         }
     }
 }

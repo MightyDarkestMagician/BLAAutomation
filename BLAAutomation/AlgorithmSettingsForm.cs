@@ -1,6 +1,7 @@
 ﻿using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -68,7 +69,32 @@ namespace BLAAutomation
 
         private void AlgorithmForm_Load(object sender, EventArgs e)
         {
-            // Логика, выполняемая при загрузке формы
+            try
+            {
+                // Загрузка проектов из базы данных
+                using (var connection = SQLiteDatabaseHelper.ConnectToDatabase())
+                {
+                    var projects = Project.GetAllProjects(connection);
+                    comboBoxProjects.Items.Clear();
+                    foreach (var project in projects)
+                    {
+                        comboBoxProjects.Items.Add(project.Name);
+                    }
+                }
+
+                // Инициализация значений по умолчанию для текстовых полей
+                textBoxPopulationSize.Text = "50";
+                textBoxGenerations.Text = "100";
+                textBoxMutationRate.Text = "0.01";
+                textBoxCrossoverRate.Text = "0.8";
+
+                // Настройка обработчиков событий для элементов управления
+                buttonRunAlgorithm.Click += buttonRunAlgorithm_Click;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

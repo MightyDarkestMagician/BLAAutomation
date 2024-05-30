@@ -19,5 +19,10 @@ namespace BLAAutomation
         private void AboutForm_Load(object sender, EventArgs e)
         {
         }
+
+        private void labelDevelopersValue_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
