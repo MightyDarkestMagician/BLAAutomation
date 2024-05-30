@@ -1,17 +1,19 @@
-﻿using MaterialSkin;
+﻿// MainForm.cs
+using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace BLAAutomation
 {
     public partial class MainForm : MaterialForm
     {
-        private Project _currentProject;
         private SQLiteConnection _connection;
+        private Project _currentProject;
 
         public MainForm()
         {
@@ -22,8 +24,7 @@ namespace BLAAutomation
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
 
             InitializeDatabase(); // Инициализация базы данных
-            _connection = SQLiteDatabaseHelper.ConnectToDatabase();
-            _currentProject = new Project(); // Инициализация пустого проекта
+            LoadProject(); // Загрузка проекта
         }
 
         private void InitializeDatabase()
@@ -39,33 +40,51 @@ namespace BLAAutomation
             }
         }
 
-        private void проектToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadProject()
         {
-            ProjectForm projectForm = new ProjectForm();
-            projectForm.Show();
+            // Логика загрузки проекта
+            using (_connection = SQLiteDatabaseHelper.ConnectToDatabase())
+            {
+                _connection.Open();
+                _currentProject = Project.GetAllProjects(_connection).FirstOrDefault(); // Исправлено: Добавлен метод FirstOrDefault
+            }
         }
 
-        private void данныеToolStripMenuItem_Click(object sender, EventArgs e)
+        private void buttonAddDevice_Click(object sender, EventArgs e)
         {
-            DataForm dataForm = new DataForm();
-            dataForm.Show();
+            var newDeviceForm = new NewDevice(_connection);
+            if (newDeviceForm.ShowDialog() == DialogResult.OK)
+            {
+                // Обновление данных проекта после добавления устройства
+                _currentProject.Devices = Device.GetDevicesForProject(_connection, _currentProject.Id).ToList(); // Исправлено: Использование ToList()
+            }
         }
 
-        private void алгоритмToolStripMenuItem_Click(object sender, EventArgs e)
+        private void buttonAddFuselage_Click(object sender, EventArgs e)
         {
-            AlgorithmSettingsForm algorithmForm = new AlgorithmSettingsForm();
-            algorithmForm.Show();
+            var newFuselageForm = new NewFuselage(_connection);
+            if (newFuselageForm.ShowDialog() == DialogResult.OK)
+            {
+                // Обновление данных проекта после добавления фюзеляжа
+                _currentProject.Fuselages = Fuselage.GetFuselages(_connection).ToList(); // Исправлено: Использование ToList()
+            }
         }
 
-        private void оПрограммеToolStripMenuItem_Click(object sender, EventArgs e)
+        private void buttonAddAntenna_Click(object sender, EventArgs e)
         {
-            AboutForm aboutForm = new AboutForm();
-            aboutForm.Show();
+            var newAntennaForm = new NewAntennaForm(_connection); // Исправлено: Использование правильного конструктора
+            if (newAntennaForm.ShowDialog() == DialogResult.OK)
+            {
+                // Обновление данных проекта после добавления антенны
+                _currentProject.Antennas = Antenna.GetAllAntennas(_connection)
+                    .Select(a => new AntennaPosition(a.Id, a.CoordinateX, a.CoordinateY, a.CoordinateZ, a.CompartmentId)) // Добавляем координату Z
+                    .ToList();
+            }
         }
 
         private void buttonOpenAlgorithmForm_Click(object sender, EventArgs e)
         {
-            AlgorithmSettingsForm algorithmForm = new AlgorithmSettingsForm();
+            var algorithmForm = new AlgorithmSettingsForm();
             algorithmForm.Show();
         }
 
@@ -88,39 +107,9 @@ namespace BLAAutomation
             }
         }
 
-        private void buttonAddAntenna_Click(object sender, EventArgs e)
+        private void materialRaisedButton1_Click(object sender, EventArgs e)
         {
-            var newAntennaForm = new NewAntenna(_connection);
-            if (newAntennaForm.ShowDialog() == DialogResult.OK)
-            {
-                // Обновление данных проекта после добавления антенны
-                _currentProject.Antennas = AntennaPosition.GetAntennasForProject(_connection, _currentProject.Id);
-            }
-        }
-
-        private void buttonAddDevice_Click(object sender, EventArgs e)
-        {
-            var newDeviceForm = new NewDevice(_connection);
-            if (newDeviceForm.ShowDialog() == DialogResult.OK)
-            {
-                // Обновление данных проекта после добавления устройства
-                _currentProject.Devices = new List<Device>(Device.GetDevicesForProject(_connection, _currentProject.Id));
-            }
-        }
-
-        private void buttonAddFuselage_Click(object sender, EventArgs e)
-        {
-            var newFuselageForm = new NewFuselage(_connection);
-            if (newFuselageForm.ShowDialog() == DialogResult.OK)
-            {
-                // Обновление данных проекта после добавления фюзеляжа
-                _currentProject.Fuselages = new List<Fuselage>(Fuselage.GetFuselages(_connection));
-            }
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            // Здесь можно добавить код, который должен выполниться при загрузке MainForm
+            // Реализация метода для обработки события
         }
     }
 }

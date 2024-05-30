@@ -1,7 +1,9 @@
-﻿using System;
+﻿// Project.cs
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Data;
+using System.Linq;
 
 namespace BLAAutomation
 {
@@ -48,8 +50,8 @@ namespace BLAAutomation
                 project.Compartments = Compartment.GetCompartmentsForProject(connection, project.Id);
                 project.Positions = Position.GetPositionsForProject(connection, project.Id);
                 project.Antennas = AntennaPosition.GetAntennasForProject(connection, project.Id);
-                project.Devices = new List<Device>(Device.GetDevicesForProject(connection, project.Id)); // Load devices
-                project.Fuselages = new List<Fuselage>(Fuselage.GetFuselages(connection)); // Load fuselages
+                project.Devices = Device.GetDevicesForProject(connection, project.Id).ToList(); // Load devices
+                project.Fuselages = Fuselage.GetFuselages(connection).ToList(); // Load fuselages
 
                 projects.Add(project);
             }

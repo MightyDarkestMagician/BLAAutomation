@@ -11,6 +11,10 @@ namespace BLAAutomation
         public double Amperage { get; set; }
         public double Power { get; set; }
         public double Frequency { get; set; }
+        public double CoordinateX { get; set; } // Добавлено
+        public double CoordinateY { get; set; } // Добавлено
+        public double CoordinateZ { get; set; } // Добавлено
+        public int CompartmentId { get; set; } // Добавлено
 
         public Antenna(int id, SQLiteConnection connection) : base(id)
         {
@@ -20,6 +24,10 @@ namespace BLAAutomation
             Amperage = double.Parse(dataSetObject.Tables[0].Rows[0]["Amperage"].ToString());
             Power = double.Parse(dataSetObject.Tables[0].Rows[0]["Power"].ToString());
             Frequency = double.Parse(dataSetObject.Tables[0].Rows[0]["Frequency"].ToString());
+            CoordinateX = double.Parse(dataSetObject.Tables[0].Rows[0]["CoordinateX"].ToString()); // Добавлено
+            CoordinateY = double.Parse(dataSetObject.Tables[0].Rows[0]["CoordinateY"].ToString()); // Добавлено
+            CoordinateZ = double.Parse(dataSetObject.Tables[0].Rows[0]["CoordinateZ"].ToString()); // Добавлено
+            CompartmentId = int.Parse(dataSetObject.Tables[0].Rows[0]["CompartmentId"].ToString()); // Добавлено
         }
 
         public static Antenna[] GetAllAntennas(SQLiteConnection connection)
@@ -33,10 +41,10 @@ namespace BLAAutomation
             return antennas;
         }
 
-        public static void InsertAntenna(SQLiteConnection connection, string name, double length, double amperage, double power, double frequency)
+        public static void InsertAntenna(SQLiteConnection connection, string name, double length, double amperage, double power, double frequency, double coordinateX, double coordinateY, double coordinateZ)
         {
-            string[] columns = { "Name", "Length", "Amperage", "Power", "Frequency" };
-            string[] values = { name, length.ToString(), amperage.ToString(), power.ToString(), frequency.ToString() };
+            string[] columns = { "Name", "Length", "Amperage", "Power", "Frequency", "CoordinateX", "CoordinateY", "CoordinateZ" }; // Добавлены координаты
+            string[] values = { name, length.ToString(), amperage.ToString(), power.ToString(), frequency.ToString(), coordinateX.ToString(), coordinateY.ToString(), coordinateZ.ToString() }; // Добавлены координаты
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Antenna", columns, values);
         }
 
@@ -47,9 +55,9 @@ namespace BLAAutomation
         }
 
         // Новый метод AddAntenna
-        public static void AddAntenna(SQLiteConnection connection, string name, double length, double amperage, double power, double frequency)
+        public static void AddAntenna(SQLiteConnection connection, string name, double length, double amperage, double power, double frequency, double coordinateX, double coordinateY, double coordinateZ)
         {
-            InsertAntenna(connection, name, length, amperage, power, frequency);
+            InsertAntenna(connection, name, length, amperage, power, frequency, coordinateX, coordinateY, coordinateZ);
         }
     }
 }

@@ -6,11 +6,11 @@ using System.Windows.Forms;
 
 namespace BLAAutomation
 {
-    public partial class NewAntenna : MaterialForm
+    public partial class NewAntennaForm : MaterialForm
     {
         private SQLiteConnection _connection;
 
-        public NewAntenna(SQLiteConnection connection)
+        public NewAntennaForm(SQLiteConnection connection)
         {
             InitializeComponent();
             _connection = connection;
@@ -20,7 +20,7 @@ namespace BLAAutomation
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
         }
 
-        private void NewAntenna_Load(object sender, EventArgs e)
+        private void NewAntennaForm_Load(object sender, EventArgs e)
         {
             // Initialization logic
         }
@@ -34,8 +34,11 @@ namespace BLAAutomation
                 double amperage = double.Parse(textBoxAmperage.Text);
                 double power = double.Parse(textBoxPower.Text);
                 double frequency = double.Parse(textBoxFrequency.Text);
+                double coordinateX = double.Parse(textBoxCoordinateX.Text); // Поле для ввода координаты X
+                double coordinateY = double.Parse(textBoxCoordinateY.Text); // Поле для ввода координаты Y
+                double coordinateZ = double.Parse(textBoxCoordinateZ.Text); // Поле для ввода координаты Z
 
-                Antenna.AddAntenna(_connection, name, length, amperage, power, frequency);
+                Antenna.AddAntenna(_connection, name, length, amperage, power, frequency, coordinateX, coordinateY, coordinateZ);
                 MessageBox.Show("Antenna added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
@@ -53,6 +56,9 @@ namespace BLAAutomation
             this.textBoxAmperage = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.textBoxPower = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.textBoxFrequency = new MaterialSkin.Controls.MaterialSingleLineTextField();
+            this.textBoxCoordinateX = new MaterialSkin.Controls.MaterialSingleLineTextField();
+            this.textBoxCoordinateY = new MaterialSkin.Controls.MaterialSingleLineTextField();
+            this.textBoxCoordinateZ = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.buttonAddAntenna = new MaterialSkin.Controls.MaterialRaisedButton();
             this.SuspendLayout();
             // 
@@ -131,31 +137,79 @@ namespace BLAAutomation
             this.textBoxFrequency.TabIndex = 4;
             this.textBoxFrequency.UseSystemPasswordChar = false;
             // 
+            // textBoxCoordinateX
+            // 
+            this.textBoxCoordinateX.Depth = 0;
+            this.textBoxCoordinateX.Hint = "Coordinate X";
+            this.textBoxCoordinateX.Location = new System.Drawing.Point(12, 223);
+            this.textBoxCoordinateX.MouseState = MaterialSkin.MouseState.HOVER;
+            this.textBoxCoordinateX.Name = "textBoxCoordinateX";
+            this.textBoxCoordinateX.PasswordChar = '\0';
+            this.textBoxCoordinateX.SelectedText = "";
+            this.textBoxCoordinateX.SelectionLength = 0;
+            this.textBoxCoordinateX.SelectionStart = 0;
+            this.textBoxCoordinateX.Size = new System.Drawing.Size(260, 23);
+            this.textBoxCoordinateX.TabIndex = 5;
+            this.textBoxCoordinateX.UseSystemPasswordChar = false;
+            // 
+            // textBoxCoordinateY
+            // 
+            this.textBoxCoordinateY.Depth = 0;
+            this.textBoxCoordinateY.Hint = "Coordinate Y";
+            this.textBoxCoordinateY.Location = new System.Drawing.Point(12, 252);
+            this.textBoxCoordinateY.MouseState = MaterialSkin.MouseState.HOVER;
+            this.textBoxCoordinateY.Name = "textBoxCoordinateY";
+            this.textBoxCoordinateY.PasswordChar = '\0';
+            this.textBoxCoordinateY.SelectedText = "";
+            this.textBoxCoordinateY.SelectionLength = 0;
+            this.textBoxCoordinateY.SelectionStart = 0;
+            this.textBoxCoordinateY.Size = new System.Drawing.Size(260, 23);
+            this.textBoxCoordinateY.TabIndex = 6;
+            this.textBoxCoordinateY.UseSystemPasswordChar = false;
+            // 
+            // textBoxCoordinateZ
+            // 
+            this.textBoxCoordinateZ.Depth = 0;
+            this.textBoxCoordinateZ.Hint = "Coordinate Z";
+            this.textBoxCoordinateZ.Location = new System.Drawing.Point(12, 281);
+            this.textBoxCoordinateZ.MouseState = MaterialSkin.MouseState.HOVER;
+            this.textBoxCoordinateZ.Name = "textBoxCoordinateZ";
+            this.textBoxCoordinateZ.PasswordChar = '\0';
+            this.textBoxCoordinateZ.SelectedText = "";
+            this.textBoxCoordinateZ.SelectionLength = 0;
+            this.textBoxCoordinateZ.SelectionStart = 0;
+            this.textBoxCoordinateZ.Size = new System.Drawing.Size(260, 23);
+            this.textBoxCoordinateZ.TabIndex = 7;
+            this.textBoxCoordinateZ.UseSystemPasswordChar = false;
+            // 
             // buttonAddAntenna
             // 
             this.buttonAddAntenna.Depth = 0;
-            this.buttonAddAntenna.Location = new System.Drawing.Point(12, 223);
+            this.buttonAddAntenna.Location = new System.Drawing.Point(12, 310);
             this.buttonAddAntenna.MouseState = MaterialSkin.MouseState.HOVER;
             this.buttonAddAntenna.Name = "buttonAddAntenna";
             this.buttonAddAntenna.Primary = true;
             this.buttonAddAntenna.Size = new System.Drawing.Size(260, 36);
-            this.buttonAddAntenna.TabIndex = 5;
+            this.buttonAddAntenna.TabIndex = 8;
             this.buttonAddAntenna.Text = "Add Antenna";
             this.buttonAddAntenna.UseVisualStyleBackColor = true;
             this.buttonAddAntenna.Click += new System.EventHandler(this.buttonAddAntenna_Click);
             // 
-            // NewAntenna
+            // NewAntennaForm
             // 
-            this.ClientSize = new System.Drawing.Size(284, 311);
+            this.ClientSize = new System.Drawing.Size(284, 361);
             this.Controls.Add(this.buttonAddAntenna);
+            this.Controls.Add(this.textBoxCoordinateZ);
+            this.Controls.Add(this.textBoxCoordinateY);
+            this.Controls.Add(this.textBoxCoordinateX);
             this.Controls.Add(this.textBoxFrequency);
             this.Controls.Add(this.textBoxPower);
             this.Controls.Add(this.textBoxAmperage);
             this.Controls.Add(this.textBoxLength);
             this.Controls.Add(this.textBoxName);
-            this.Name = "NewAntenna";
+            this.Name = "NewAntennaForm";
             this.Text = "New Antenna";
-            this.Load += new System.EventHandler(this.NewAntenna_Load);
+            this.Load += new System.EventHandler(this.NewAntennaForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -165,6 +219,9 @@ namespace BLAAutomation
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxAmperage;
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxPower;
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxFrequency;
+        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxCoordinateX;
+        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxCoordinateY;
+        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxCoordinateZ;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddAntenna;
     }
 }

@@ -79,6 +79,7 @@ namespace BLAAutomation
             this.dataGridViewDevices.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewDevices.Size = new System.Drawing.Size(484, 211);
             this.dataGridViewDevices.TabIndex = 0;
+            this.dataGridViewDevices.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDevices_CellContentClick);
             // 
             // contextMenuStripDevices
             // 
@@ -120,5 +121,10 @@ namespace BLAAutomation
         private System.Windows.Forms.ToolStripMenuItem AddDeviceMenuItem;
         private System.ComponentModel.IContainer components;
         private System.Windows.Forms.ToolStripMenuItem DeleteDeviceMenuItem;
+
+        private void dataGridViewDevices_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
