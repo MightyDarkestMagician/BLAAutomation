@@ -9,12 +9,16 @@ namespace BLAAutomation
         public int Id { get; set; }
         public double CoordinateX { get; set; }
         public double CoordinateY { get; set; }
+        public double CoordinateZ { get; set; }
+        public int CompartmentId { get; set; }
 
-        public AntennaPosition(int id, double coordinateX, double coordinateY)
+        public AntennaPosition(int id, double coordinateX, double coordinateY, double coordinateZ, int compartmentId)
         {
             Id = id;
             CoordinateX = coordinateX;
             CoordinateY = coordinateY;
+            CoordinateZ = coordinateZ;
+            CompartmentId = compartmentId;
         }
 
         public static List<AntennaPosition> GetAntennasForProject(SQLiteConnection connection, int projectId)
@@ -27,7 +31,9 @@ namespace BLAAutomation
                 var antenna = new AntennaPosition(
                     int.Parse(row["Id"].ToString()),
                     double.Parse(row["CoordinateX"].ToString()),
-                    double.Parse(row["CoordinateY"].ToString())
+                    double.Parse(row["CoordinateY"].ToString()),
+                    double.Parse(row["CoordinateZ"].ToString()),
+                    int.Parse(row["CompartmentId"].ToString())
                 );
                 antennas.Add(antenna);
             }
@@ -35,4 +41,5 @@ namespace BLAAutomation
             return antennas;
         }
     }
+
 }

@@ -4,34 +4,39 @@ using System.Data.SQLite;
 
 namespace BLAAutomation
 {
-    public class Device : BasicObject
+    public class Device
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
         public double Weight { get; set; }
         public double NoiseImmunity { get; set; }
 
-        public Device(int id, SQLiteConnection connection) : base(id)
+        public Device(int id, SQLiteConnection connection)
         {
-            DataSet dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Device", "Id = " + id.ToString() + ";");
-            Name = dataSetObject.Tables[0].Rows[0]["Name"].ToString();
-            Weight = double.Parse(dataSetObject.Tables[0].Rows[0]["Weight"].ToString());
-            NoiseImmunity = double.Parse(dataSetObject.Tables[0].Rows[0]["NoiseImmunity"].ToString());
+            var dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Device", "Id = " + id);
+            var row = dataSetObject.Tables[0].Rows[0];
+            Id = id;
+            Name = row["Name"].ToString();
+            Weight = double.Parse(row["Weight"].ToString());
+            NoiseImmunity = double.Parse(row["NoiseImmunity"].ToString());
         }
 
         public static Device[] GetDevicesForProject(SQLiteConnection connection, int projectId)
         {
-            DataSet dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "DevicesForPlacement", "Id_Project = " + projectId.ToString() + ";");
-            Device[] devices = new Device[dataSetObjects.Tables[0].Rows.Count];
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "DevicesForPlacement", "Id_Project = " + projectId);
+            var devices = new Device[dataSetObjects.Tables[0].Rows.Count];
             for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
             {
-                devices[i] = new Device(int.Parse(dataSetObjects.Tables[0].Rows[i]["Id_Device"].ToString()), connection);
+                var row = dataSetObjects.Tables[0].Rows[i];
+                devices[i] = new Device(int.Parse(row["Id_Device"].ToString()), connection);
             }
             return devices;
         }
 
         public static Device[] GetAllDevices(SQLiteConnection connection)
         {
-            DataSet dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Device");
-            Device[] devices = new Device[dataSetObjects.Tables[0].Rows.Count];
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Device");
+            var devices = new Device[dataSetObjects.Tables[0].Rows.Count];
             for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
             {
                 devices[i] = new Device(int.Parse(dataSetObjects.Tables[0].Rows[i]["Id"].ToString()), connection);

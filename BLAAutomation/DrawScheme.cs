@@ -20,9 +20,11 @@ namespace BLAAutomation
 
         public void DrawProject()
         {
+            Console.WriteLine("Starting to draw project...");
             DrawCompartments();
             DrawPositions();
             DrawAntennas();
+            Console.WriteLine("Finished drawing project.");
         }
 
         private void DrawCompartments()
@@ -40,6 +42,8 @@ namespace BLAAutomation
                     g.FillRectangle(Brushes.LightGray, rect);
                     g.DrawRectangle(Pens.Black, rect);
                     g.DrawString($"Отсек {compartment.Id}", SystemFonts.DefaultFont, Brushes.Black, rect.Location);
+
+                    Console.WriteLine($"Drew compartment {compartment.Id} at {rect.Location}");
                 }
             }
         }
@@ -59,6 +63,8 @@ namespace BLAAutomation
                     g.FillRectangle(Brushes.LightGreen, rect);
                     g.DrawRectangle(Pens.DarkGreen, rect);
                     g.DrawString($"P{position.Id}", SystemFonts.DefaultFont, Brushes.Black, rect.Location);
+
+                    Console.WriteLine($"Drew position {position.Id} at {rect.Location}");
                 }
             }
         }
@@ -78,11 +84,13 @@ namespace BLAAutomation
                     g.FillRectangle(Brushes.LightBlue, rect);
                     g.DrawRectangle(Pens.Blue, rect);
                     g.DrawString($"A{antenna.Id}", SystemFonts.DefaultFont, Brushes.Black, rect.Location);
+
+                    Console.WriteLine($"Drew antenna {antenna.Id} at {rect.Location}");
                 }
             }
         }
 
-        public void DisplayOnForm(Form form)
+        public void DisplayOnForm(SchemeForm form)
         {
             PictureBox pictureBox = new PictureBox
             {
@@ -90,6 +98,9 @@ namespace BLAAutomation
                 SizeMode = PictureBoxSizeMode.AutoSize
             };
             form.Controls.Add(pictureBox);
+            form.Invalidate();
+
+            Console.WriteLine("Displaying image on form.");
         }
     }
 }
