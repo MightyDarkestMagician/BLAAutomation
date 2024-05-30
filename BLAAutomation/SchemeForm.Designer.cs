@@ -37,7 +37,9 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "SchemeForm";
             this.Text = "SchemeForm";
+            this.Load += new System.EventHandler(this.SchemeForm_Load);
             this.ResumeLayout(false);
+
         }
 
         #endregion

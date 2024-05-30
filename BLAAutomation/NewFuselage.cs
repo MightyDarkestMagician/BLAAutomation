@@ -79,11 +79,17 @@ namespace BLAAutomation
             this.Controls.Add(this.textBoxName);
             this.Name = "NewFuselage";
             this.Text = "New Fuselage";
+            this.Load += new System.EventHandler(this.NewFuselage_Load);
             this.ResumeLayout(false);
 
         }
 
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxName;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddFuselage;
+
+        private void NewFuselage_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

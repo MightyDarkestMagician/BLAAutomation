@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SQLite;
+using System.Data;
 
 namespace BLAAutomation
 {
@@ -12,12 +12,16 @@ namespace BLAAutomation
         public List<Compartment> Compartments { get; set; }
         public List<Position> Positions { get; set; }
         public List<AntennaPosition> Antennas { get; set; }
+        public List<Device> Devices { get; set; } // Add Devices to Project
+        public List<Fuselage> Fuselages { get; set; } // Add Fuselages to Project
 
         public Project()
         {
             Compartments = new List<Compartment>();
             Positions = new List<Position>();
             Antennas = new List<AntennaPosition>();
+            Devices = new List<Device>(); // Initialize Devices
+            Fuselages = new List<Fuselage>(); // Initialize Fuselages
         }
 
         public static void AddProject(SQLiteConnection connection, string name, int fuselageId)
@@ -40,10 +44,12 @@ namespace BLAAutomation
                     Name = row["Name"].ToString()
                 };
 
-                // Загрузка отсеков, позиций и антенн для проекта
+                // Загрузка отсеков, позиций, антенн, устройств и фюзеляжей для проекта
                 project.Compartments = Compartment.GetCompartmentsForProject(connection, project.Id);
                 project.Positions = Position.GetPositionsForProject(connection, project.Id);
                 project.Antennas = AntennaPosition.GetAntennasForProject(connection, project.Id);
+                project.Devices = new List<Device>(Device.GetDevicesForProject(connection, project.Id)); // Load devices
+                project.Fuselages = new List<Fuselage>(Fuselage.GetFuselages(connection)); // Load fuselages
 
                 projects.Add(project);
             }

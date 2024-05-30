@@ -125,6 +125,7 @@ namespace BLAAutomation
             this.Controls.Add(this.textBoxName);
             this.Name = "NewDevice";
             this.Text = "New Device";
+            this.Load += new System.EventHandler(this.NewDevice_Load);
             this.ResumeLayout(false);
 
         }
@@ -133,5 +134,10 @@ namespace BLAAutomation
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxWeight;
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxNoiseImmunity;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddDevice;
+
+        private void NewDevice_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
