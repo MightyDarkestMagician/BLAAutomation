@@ -8,39 +8,67 @@ namespace BLAAutomation
 {
     public partial class NewDevice : MaterialForm
     {
-        private SQLiteConnection _connection;
+        private string _connectionString;
 
-        public NewDevice(SQLiteConnection connection)
+        public NewDevice(string connectionString)
         {
             InitializeComponent();
-            _connection = connection;
+            _connectionString = connectionString;
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
         }
 
+        private void NewDevice_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                Console.WriteLine("Loading NewDevice");
+
+                // Инициализация значений по умолчанию для текстовых полей
+                textBoxName.Text = "Device1";
+                textBoxWeight.Text = "5";
+                textBoxNoiseImmunity.Text = "10";
+
+                // Настройка обработчиков событий для элементов управления
+                buttonAddDevice.Click += buttonAddDevice_Click;
+
+                Console.WriteLine("NewDevice loaded successfully");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
         private void buttonAddDevice_Click(object sender, EventArgs e)
         {
             try
             {
-                string name = textBoxName.Text;
-                if (!double.TryParse(textBoxWeight.Text, out double weight) || weight <= 0)
+                using (var connection = new SQLiteConnection(_connectionString))
                 {
-                    MessageBox.Show("Неверное значение веса. Введите положительное число.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                    connection.Open();
 
-                if (!double.TryParse(textBoxNoiseImmunity.Text, out double noiseImmunity) || noiseImmunity < 0)
-                {
-                    MessageBox.Show("Неверное значение помехоустойчивости. Введите неотрицательное число.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                    string name = textBoxName.Text;
+                    if (!double.TryParse(textBoxWeight.Text, out double weight) || weight <= 0)
+                    {
+                        MessageBox.Show("Неверное значение веса. Введите положительное число.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
-                Device.AddDevice(_connection, name, weight, noiseImmunity);
-                MessageBox.Show("Устройство успешно добавлено!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    if (!double.TryParse(textBoxNoiseImmunity.Text, out double noiseImmunity) || noiseImmunity < 0)
+                    {
+                        MessageBox.Show("Неверное значение помехоустойчивости. Введите неотрицательное число.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    Device.AddDevice(connection, name, weight, noiseImmunity);
+                    MessageBox.Show("Устройство успешно добавлено!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -135,9 +163,6 @@ namespace BLAAutomation
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxNoiseImmunity;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddDevice;
 
-        private void NewDevice_Load(object sender, EventArgs e)
-        {
-
-        }
+        
     }
 }

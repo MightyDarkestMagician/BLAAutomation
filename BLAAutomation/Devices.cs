@@ -9,12 +9,12 @@ namespace BLAAutomation
 {
     public partial class Devices : MaterialForm
     {
-        private SQLiteConnection _connection;
+        private string _connectionString;
 
-        public Devices(SQLiteConnection connection)
+        public Devices(string connectionString)
         {
             InitializeComponent();
-            _connection = connection;
+            _connectionString = connectionString;
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
@@ -29,14 +29,18 @@ namespace BLAAutomation
 
         private void UpdateTable()
         {
-            string query = "SELECT Id as 'ID', Name as 'Name', Weight as 'Weight', NoiseImmunity as 'Noise Immunity' FROM Device;";
-            DataSet dataSetDevices = SQLiteDatabaseHelper.SQLiteCustomCommandSelect(_connection, query);
-            dataGridViewDevices.DataSource = dataSetDevices.Tables[0];
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                string query = "SELECT Id as 'ID', Name as 'Name', Weight as 'Weight', NoiseImmunity as 'Noise Immunity' FROM Device;";
+                DataSet dataSetDevices = SQLiteDatabaseHelper.SQLiteCustomCommandSelect(connection, query);
+                dataGridViewDevices.DataSource = dataSetDevices.Tables[0];
+            }
         }
 
         private void AddDeviceMenuItem_Click(object sender, EventArgs e)
         {
-            using (var newDeviceForm = new NewDevice(_connection))
+            using (var newDeviceForm = new NewDevice(_connectionString))
             {
                 if (newDeviceForm.ShowDialog() == DialogResult.OK)
                 {
@@ -50,8 +54,12 @@ namespace BLAAutomation
             if (dataGridViewDevices.SelectedRows.Count > 0)
             {
                 int selectedId = Convert.ToInt32(dataGridViewDevices.SelectedRows[0].Cells["ID"].Value);
-                Device.RemoveDevice(_connection, selectedId);
-                UpdateTable();
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
+                    Device.RemoveDevice(connection, selectedId);
+                    UpdateTable();
+                }
             }
             else
             {

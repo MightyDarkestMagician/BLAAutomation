@@ -27,6 +27,8 @@
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddFuselage;
         private MaterialSkin.Controls.MaterialRaisedButton buttonOpenAlgorithmForm;
         private MaterialSkin.Controls.MaterialRaisedButton buttonDrawScheme;
+        private MaterialSkin.Controls.MaterialRaisedButton buttonAbout; // Добавлено
+        private MaterialSkin.Controls.MaterialRaisedButton buttonOpenProjectForm; // Добавлено
 
         private void InitializeComponent()
         {
@@ -35,7 +37,8 @@
             this.buttonAddFuselage = new MaterialSkin.Controls.MaterialRaisedButton();
             this.buttonOpenAlgorithmForm = new MaterialSkin.Controls.MaterialRaisedButton();
             this.buttonDrawScheme = new MaterialSkin.Controls.MaterialRaisedButton();
-            this.materialRaisedButton1 = new MaterialSkin.Controls.MaterialRaisedButton();
+            this.buttonAbout = new MaterialSkin.Controls.MaterialRaisedButton();
+            this.buttonOpenProjectForm = new MaterialSkin.Controls.MaterialRaisedButton();
             this.SuspendLayout();
             // 
             // buttonAddAntenna
@@ -103,25 +106,39 @@
             this.buttonDrawScheme.UseVisualStyleBackColor = true;
             this.buttonDrawScheme.Click += new System.EventHandler(this.buttonDrawScheme_Click);
             // 
-            // materialRaisedButton1
+            // buttonAbout
             // 
-            this.materialRaisedButton1.Depth = 0;
-            this.materialRaisedButton1.Location = new System.Drawing.Point(12, 357);
-            this.materialRaisedButton1.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialRaisedButton1.Name = "materialRaisedButton1";
-            this.materialRaisedButton1.Primary = true;
-            this.materialRaisedButton1.Size = new System.Drawing.Size(260, 36);
-            this.materialRaisedButton1.TabIndex = 5;
-            this.materialRaisedButton1.Text = "Draw Scheme";
-            this.materialRaisedButton1.UseVisualStyleBackColor = true;
-            this.materialRaisedButton1.Click += new System.EventHandler(this.materialRaisedButton1_Click);
+            this.buttonAbout.Depth = 0;
+            this.buttonAbout.Location = new System.Drawing.Point(12, 450);
+            this.buttonAbout.MouseState = MaterialSkin.MouseState.HOVER;
+            this.buttonAbout.Name = "buttonAbout";
+            this.buttonAbout.Primary = true;
+            this.buttonAbout.Size = new System.Drawing.Size(260, 36);
+            this.buttonAbout.TabIndex = 5;
+            this.buttonAbout.Text = "About";
+            this.buttonAbout.UseVisualStyleBackColor = true;
+            this.buttonAbout.Click += new System.EventHandler(this.buttonAbout_Click);
+            // 
+            // buttonOpenProjectForm
+            // 
+            this.buttonOpenProjectForm.Depth = 0;
+            this.buttonOpenProjectForm.Location = new System.Drawing.Point(12, 288);
+            this.buttonOpenProjectForm.MouseState = MaterialSkin.MouseState.HOVER;
+            this.buttonOpenProjectForm.Name = "buttonOpenProjectForm";
+            this.buttonOpenProjectForm.Primary = true;
+            this.buttonOpenProjectForm.Size = new System.Drawing.Size(260, 36);
+            this.buttonOpenProjectForm.TabIndex = 6;
+            this.buttonOpenProjectForm.Text = "Open Project Form";
+            this.buttonOpenProjectForm.UseVisualStyleBackColor = true;
+            this.buttonOpenProjectForm.Click += new System.EventHandler(this.buttonOpenProjectForm_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 405);
-            this.Controls.Add(this.materialRaisedButton1);
+            this.ClientSize = new System.Drawing.Size(284, 498);
+            this.Controls.Add(this.buttonOpenProjectForm);
+            this.Controls.Add(this.buttonAbout);
             this.Controls.Add(this.buttonDrawScheme);
             this.Controls.Add(this.buttonOpenAlgorithmForm);
             this.Controls.Add(this.buttonAddFuselage);
@@ -129,13 +146,12 @@
             this.Controls.Add(this.buttonAddAntenna);
             this.Name = "MainForm";
             this.Text = "BLAAutomation";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 
         }
 
-
         #endregion
 
-        private MaterialSkin.Controls.MaterialRaisedButton materialRaisedButton1;
     }
 }

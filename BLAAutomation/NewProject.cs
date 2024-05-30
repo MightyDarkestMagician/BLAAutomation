@@ -8,12 +8,12 @@ namespace BLAAutomation
 {
     public partial class NewProject : MaterialForm
     {
-        private SQLiteConnection _connection;
+        private string _connectionString;
 
-        public NewProject(SQLiteConnection connection)
+        public NewProject(string connectionString)
         {
             InitializeComponent();
-            _connection = connection;
+            _connectionString = connectionString;
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
@@ -24,13 +24,17 @@ namespace BLAAutomation
         {
             try
             {
-                string projectName = textBoxProjectName.Text;
-                int fuselageId = Convert.ToInt32(comboBoxFuselages.SelectedValue);
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
+                    string projectName = textBoxProjectName.Text;
+                    int fuselageId = Convert.ToInt32(comboBoxFuselages.SelectedValue);
 
-                Project.AddProject(_connection, projectName, fuselageId);
-                MessageBox.Show("Проект успешно добавлен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    Project.AddProject(connection, projectName, fuselageId);
+                    MessageBox.Show("Проект успешно добавлен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -45,10 +49,14 @@ namespace BLAAutomation
 
         private void LoadFuselages()
         {
-            var fuselages = Fuselage.GetFuselages(_connection);
-            comboBoxFuselages.DataSource = fuselages;
-            comboBoxFuselages.DisplayMember = "Name";
-            comboBoxFuselages.ValueMember = "Id";
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Open();
+                var fuselages = Fuselage.GetFuselages(connection);
+                comboBoxFuselages.DataSource = fuselages;
+                comboBoxFuselages.DisplayMember = "Name";
+                comboBoxFuselages.ValueMember = "Id";
+            }
         }
 
         private void InitializeComponent()
@@ -80,6 +88,7 @@ namespace BLAAutomation
             this.comboBoxFuselages.Name = "comboBoxFuselages";
             this.comboBoxFuselages.Size = new System.Drawing.Size(260, 21);
             this.comboBoxFuselages.TabIndex = 1;
+            this.comboBoxFuselages.SelectedIndexChanged += new System.EventHandler(this.comboBoxFuselages_SelectedIndexChanged);
             // 
             // buttonAddProject
             // 
@@ -112,5 +121,10 @@ namespace BLAAutomation
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxProjectName;
         private System.Windows.Forms.ComboBox comboBoxFuselages;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddProject;
+
+        private void comboBoxFuselages_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

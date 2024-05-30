@@ -11,7 +11,12 @@ namespace BLAAutomation
 
         public static SQLiteConnection ConnectToDatabase()
         {
-            return new SQLiteConnection($"Data Source={_databasePath};Version=3;");
+            return new SQLiteConnection(GetConnectionString());
+        }
+
+        public static string GetConnectionString()
+        {
+            return $"Data Source={_databasePath};Version=3;";
         }
 
         public static DataSet SQLiteCommandSelectAllFrom(SQLiteConnection sqliteConn, string TableName)

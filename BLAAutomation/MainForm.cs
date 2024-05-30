@@ -1,5 +1,4 @@
-﻿// MainForm.cs
-using MaterialSkin;
+﻿using MaterialSkin;
 using MaterialSkin.Controls;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace BLAAutomation
 {
     public partial class MainForm : MaterialForm
     {
-        private SQLiteConnection _connection;
+        private string _connectionString;
         private Project _currentProject;
 
         public MainForm()
@@ -23,8 +22,10 @@ namespace BLAAutomation
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
 
-            InitializeDatabase(); // Инициализация базы данных
-            LoadProject(); // Загрузка проекта
+            _connectionString = SQLiteDatabaseHelper.GetConnectionString(); // Изменение для получения строки подключения
+
+            InitializeDatabase();           // Инициализация базы данных
+            LoadProject();                  // Загрузка проекта
         }
 
         private void InitializeDatabase()
@@ -43,42 +44,54 @@ namespace BLAAutomation
         private void LoadProject()
         {
             // Логика загрузки проекта
-            using (_connection = SQLiteDatabaseHelper.ConnectToDatabase())
+            using (var connection = SQLiteDatabaseHelper.ConnectToDatabase())
             {
-                _connection.Open();
-                _currentProject = Project.GetAllProjects(_connection).FirstOrDefault(); // Исправлено: Добавлен метод FirstOrDefault
+                connection.Open();
+                _currentProject = Project.GetAllProjects(connection).FirstOrDefault(); // Исправлено: Добавлен метод FirstOrDefault
             }
         }
 
         private void buttonAddDevice_Click(object sender, EventArgs e)
         {
-            var newDeviceForm = new NewDevice(_connection);
+            var newDeviceForm = new NewDevice(_connectionString); // Изменено на использование строки подключения
             if (newDeviceForm.ShowDialog() == DialogResult.OK)
             {
                 // Обновление данных проекта после добавления устройства
-                _currentProject.Devices = Device.GetDevicesForProject(_connection, _currentProject.Id).ToList(); // Исправлено: Использование ToList()
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
+                    _currentProject.Devices = Device.GetDevicesForProject(connection, _currentProject.Id).ToList(); // Исправлено: Использование ToList()
+                }
             }
         }
 
         private void buttonAddFuselage_Click(object sender, EventArgs e)
         {
-            var newFuselageForm = new NewFuselage(_connection);
+            var newFuselageForm = new NewFuselage(_connectionString); // Изменено на использование строки подключения
             if (newFuselageForm.ShowDialog() == DialogResult.OK)
             {
                 // Обновление данных проекта после добавления фюзеляжа
-                _currentProject.Fuselages = Fuselage.GetFuselages(_connection).ToList(); // Исправлено: Использование ToList()
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
+                    _currentProject.Fuselages = Fuselage.GetFuselages(connection).ToList();    // Исправлено: Использование ToList()
+                }
             }
         }
 
         private void buttonAddAntenna_Click(object sender, EventArgs e)
         {
-            var newAntennaForm = new NewAntennaForm(_connection); // Исправлено: Использование правильного конструктора
+            var newAntennaForm = new NewAntennaForm(_connectionString); // Изменено на использование строки подключения
             if (newAntennaForm.ShowDialog() == DialogResult.OK)
             {
                 // Обновление данных проекта после добавления антенны
-                _currentProject.Antennas = Antenna.GetAllAntennas(_connection)
-                    .Select(a => new AntennaPosition(a.Id, a.CoordinateX, a.CoordinateY, a.CoordinateZ, a.CompartmentId)) // Добавляем координату Z
-                    .ToList();
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
+                    _currentProject.Antennas = Antenna.GetAllAntennas(connection)
+                        .Select(a => new AntennaPosition(a.Id, a.CoordinateX, a.CoordinateY, a.CoordinateZ, a.CompartmentId)) // Добавляем координату Z
+                        .ToList();
+                }
             }
         }
 
@@ -107,9 +120,21 @@ namespace BLAAutomation
             }
         }
 
-        private void materialRaisedButton1_Click(object sender, EventArgs e)
+        private void buttonAbout_Click(object sender, EventArgs e)
         {
-            // Реализация метода для обработки события
+            var aboutForm = new AboutForm();
+            aboutForm.Show();
+        }
+
+        private void buttonOpenProjectForm_Click(object sender, EventArgs e)
+        {
+            var projectForm = new ProjectForm(_connectionString); // Передача строки подключения в ProjectForm
+            projectForm.Show();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -35,6 +35,11 @@ public class DatabaseInitializer
                     FOREIGN KEY (Id_Fuselage) REFERENCES Fuselage(Id)
                 );",
                 @"
+                CREATE TABLE IF NOT EXISTS Projects (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL
+                );",
+                @"
                 CREATE TABLE IF NOT EXISTS CompartmentsInFuselage (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Id_Fuselage INTEGER NOT NULL,

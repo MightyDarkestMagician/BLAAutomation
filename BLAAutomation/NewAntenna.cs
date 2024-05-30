@@ -8,12 +8,12 @@ namespace BLAAutomation
 {
     public partial class NewAntennaForm : MaterialForm
     {
-        private SQLiteConnection _connection;
+        private string _connectionString;
 
-        public NewAntennaForm(SQLiteConnection connection)
+        public NewAntennaForm(string connectionString)
         {
             InitializeComponent();
-            _connection = connection;
+            _connectionString = connectionString;
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
@@ -22,26 +22,54 @@ namespace BLAAutomation
 
         private void NewAntennaForm_Load(object sender, EventArgs e)
         {
-            // Initialization logic
+            try
+            {
+                Console.WriteLine("Loading NewAntennaForm");
+
+                // Инициализация значений по умолчанию для текстовых полей
+                textBoxName.Text = "Antenna1";
+                textBoxLength.Text = "10";
+                textBoxAmperage.Text = "2";
+                textBoxPower.Text = "100";
+                textBoxFrequency.Text = "800";
+                textBoxCoordinateX.Text = "0"; // Поле для ввода координаты X
+                textBoxCoordinateY.Text = "0"; // Поле для ввода координаты Y
+                textBoxCoordinateZ.Text = "0"; // Поле для ввода координаты Z
+
+                // Настройка обработчиков событий для элементов управления
+                buttonAddAntenna.Click += buttonAddAntenna_Click;
+
+                Console.WriteLine("NewAntennaForm loaded successfully");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         private void buttonAddAntenna_Click(object sender, EventArgs e)
         {
             try
             {
-                string name = textBoxName.Text;
-                double length = double.Parse(textBoxLength.Text);
-                double amperage = double.Parse(textBoxAmperage.Text);
-                double power = double.Parse(textBoxPower.Text);
-                double frequency = double.Parse(textBoxFrequency.Text);
-                double coordinateX = double.Parse(textBoxCoordinateX.Text); // Поле для ввода координаты X
-                double coordinateY = double.Parse(textBoxCoordinateY.Text); // Поле для ввода координаты Y
-                double coordinateZ = double.Parse(textBoxCoordinateZ.Text); // Поле для ввода координаты Z
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
 
-                Antenna.AddAntenna(_connection, name, length, amperage, power, frequency, coordinateX, coordinateY, coordinateZ);
-                MessageBox.Show("Antenna added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    string name = textBoxName.Text;
+                    double length = double.Parse(textBoxLength.Text);
+                    double amperage = double.Parse(textBoxAmperage.Text);
+                    double power = double.Parse(textBoxPower.Text);
+                    double frequency = double.Parse(textBoxFrequency.Text);
+                    double coordinateX = double.Parse(textBoxCoordinateX.Text); // Поле для ввода координаты X
+                    double coordinateY = double.Parse(textBoxCoordinateY.Text); // Поле для ввода координаты Y
+                    double coordinateZ = double.Parse(textBoxCoordinateZ.Text); // Поле для ввода координаты Z
+
+                    Antenna.AddAntenna(connection, name, length, amperage, power, frequency, coordinateX, coordinateY, coordinateZ);
+                    MessageBox.Show("Antenna added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {

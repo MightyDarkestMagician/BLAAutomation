@@ -70,6 +70,7 @@
             this.labelAppNameValue.Size = new System.Drawing.Size(115, 19);
             this.labelAppNameValue.TabIndex = 3;
             this.labelAppNameValue.Text = "BLAAutomation";
+            this.labelAppNameValue.Click += new System.EventHandler(this.labelAppNameValue_Click);
             // 
             // labelVersionValue
             // 
@@ -93,7 +94,7 @@
             this.labelDevelopersValue.Location = new System.Drawing.Point(172, 181);
             this.labelDevelopersValue.MouseState = MaterialSkin.MouseState.HOVER;
             this.labelDevelopersValue.Name = "labelDevelopersValue";
-            this.labelDevelopersValue.Size = new System.Drawing.Size(143, 19);
+            this.labelDevelopersValue.Size = new System.Drawing.Size(117, 19);
             this.labelDevelopersValue.TabIndex = 5;
             this.labelDevelopersValue.Text = "Тимур Гилязов";
             this.labelDevelopersValue.Click += new System.EventHandler(this.labelDevelopersValue_Click);

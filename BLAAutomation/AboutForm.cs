@@ -24,5 +24,10 @@ namespace BLAAutomation
         {
 
         }
+
+        private void labelAppNameValue_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -8,27 +8,52 @@ namespace BLAAutomation
 {
     public partial class NewFuselage : MaterialForm
     {
-        private SQLiteConnection _connection;
+        private string _connectionString;
 
-        public NewFuselage(SQLiteConnection connection)
+        public NewFuselage(string connectionString)
         {
             InitializeComponent();
-            _connection = connection;
+            _connectionString = connectionString;
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
         }
 
+        private void NewFuselage_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                Console.WriteLine("Loading NewFuselage");
+
+                // Инициализация значений по умолчанию для текстовых полей
+                textBoxName.Text = "Fuselage1";
+
+                // Настройка обработчиков событий для элементов управления
+                buttonAddFuselage.Click += buttonAddFuselage_Click;
+
+                Console.WriteLine("NewFuselage loaded successfully");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
         private void buttonAddFuselage_Click(object sender, EventArgs e)
         {
             try
             {
-                string name = textBoxName.Text;
-                Fuselage.AddFuselage(_connection, name);
-                MessageBox.Show("Фюзеляж успешно добавлен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                using (var connection = new SQLiteConnection(_connectionString))
+                {
+                    connection.Open();
+                    string name = textBoxName.Text;
+                    Fuselage.AddFuselage(connection, name);
+                    MessageBox.Show("Фюзеляж успешно добавлен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -87,9 +112,5 @@ namespace BLAAutomation
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxName;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddFuselage;
 
-        private void NewFuselage_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }
