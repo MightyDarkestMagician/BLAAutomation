@@ -125,6 +125,12 @@
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
     <Compile Include="EquipmentPlacement.cs" />
+    <Compile Include="ViewProjects.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewProjects.Designer.cs">
+      <DependentUpon>ViewProjects.cs</DependentUpon>
+    </Compile>
     <Compile Include="PlacementPosition.cs" />
     <Compile Include="SchemeForm.cs">
       <SubType>Form</SubType>
@@ -215,6 +221,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ViewProjects.resx">
+      <DependentUpon>ViewProjects.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -33,7 +33,7 @@ namespace BLAAutomation
             {
                 connection.Open();
                 string query = "SELECT Id as 'ID', Name as 'Name', Weight as 'Weight', NoiseImmunity as 'Noise Immunity' FROM Device;";
-                DataSet dataSetDevices = SQLiteDatabaseHelper.SQLiteCustomCommandSelect(connection, query);
+                DataSet dataSetDevices = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Device", "1=1");
                 dataGridViewDevices.DataSource = dataSetDevices.Tables[0];
             }
         }
@@ -87,7 +87,6 @@ namespace BLAAutomation
             this.dataGridViewDevices.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewDevices.Size = new System.Drawing.Size(484, 211);
             this.dataGridViewDevices.TabIndex = 0;
-            this.dataGridViewDevices.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewDevices_CellContentClick);
             // 
             // contextMenuStripDevices
             // 
@@ -127,12 +126,7 @@ namespace BLAAutomation
         private System.Windows.Forms.DataGridView dataGridViewDevices;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripDevices;
         private System.Windows.Forms.ToolStripMenuItem AddDeviceMenuItem;
-        private System.ComponentModel.IContainer components;
         private System.Windows.Forms.ToolStripMenuItem DeleteDeviceMenuItem;
-
-        private void dataGridViewDevices_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
+        private System.ComponentModel.IContainer components;
     }
 }

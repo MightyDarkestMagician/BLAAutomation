@@ -52,10 +52,15 @@ namespace BLAAutomation
                 PlacementPosition.AddPosition(connection, 1, 15, 25, 35, 400);
                 PlacementPosition.AddPosition(connection, 2, 20, 30, 40, 500);
                 PlacementPosition.AddPosition(connection, 3, 25, 35, 45, 600);
+
+                // Получаем строку подключения
+                string connectionString = SQLiteDatabaseHelper.GetConnectionString();
+
+                // Запуск основного окна с передачей строки подключения
+                Application.Run(new MainForm(connectionString));
             }
 
             Console.WriteLine("Database initialized and data added successfully.");
-            Application.Run(new MainForm());
         }
     }
 }

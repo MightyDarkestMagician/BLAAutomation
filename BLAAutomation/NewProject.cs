@@ -20,6 +20,22 @@ namespace BLAAutomation
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
         }
 
+        private void NewProject_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                // Инициализация значений по умолчанию для текстовых полей
+                textBoxName.Text = "Project1";
+
+                // Настройка обработчиков событий для элементов управления
+                buttonAddProject.Click += buttonAddProject_Click;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void buttonAddProject_Click(object sender, EventArgs e)
         {
             try
@@ -27,10 +43,9 @@ namespace BLAAutomation
                 using (var connection = new SQLiteConnection(_connectionString))
                 {
                     connection.Open();
-                    string projectName = textBoxProjectName.Text;
-                    int fuselageId = Convert.ToInt32(comboBoxFuselages.SelectedValue);
-
-                    Project.AddProject(connection, projectName, fuselageId);
+                    string name = textBoxName.Text;
+                    int fuselageId = 1; // Пример Id фюзеляжа
+                    Project.AddProject(connection, name, fuselageId);
                     MessageBox.Show("Проект успешно добавлен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -42,63 +57,36 @@ namespace BLAAutomation
             }
         }
 
-        private void NewProject_Load(object sender, EventArgs e)
-        {
-            LoadFuselages();
-        }
-
-        private void LoadFuselages()
-        {
-            using (var connection = new SQLiteConnection(_connectionString))
-            {
-                connection.Open();
-                var fuselages = Fuselage.GetFuselages(connection);
-                comboBoxFuselages.DataSource = fuselages;
-                comboBoxFuselages.DisplayMember = "Name";
-                comboBoxFuselages.ValueMember = "Id";
-            }
-        }
-
         private void InitializeComponent()
         {
-            this.textBoxProjectName = new MaterialSkin.Controls.MaterialSingleLineTextField();
-            this.comboBoxFuselages = new System.Windows.Forms.ComboBox();
+            this.textBoxName = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.buttonAddProject = new MaterialSkin.Controls.MaterialRaisedButton();
             this.SuspendLayout();
             // 
-            // textBoxProjectName
+            // textBoxName
             // 
-            this.textBoxProjectName.Depth = 0;
-            this.textBoxProjectName.Hint = "Project Name";
-            this.textBoxProjectName.Location = new System.Drawing.Point(12, 78);
-            this.textBoxProjectName.MouseState = MaterialSkin.MouseState.HOVER;
-            this.textBoxProjectName.Name = "textBoxProjectName";
-            this.textBoxProjectName.PasswordChar = '\0';
-            this.textBoxProjectName.SelectedText = "";
-            this.textBoxProjectName.SelectionLength = 0;
-            this.textBoxProjectName.SelectionStart = 0;
-            this.textBoxProjectName.Size = new System.Drawing.Size(260, 23);
-            this.textBoxProjectName.TabIndex = 0;
-            this.textBoxProjectName.UseSystemPasswordChar = false;
-            // 
-            // comboBoxFuselages
-            // 
-            this.comboBoxFuselages.FormattingEnabled = true;
-            this.comboBoxFuselages.Location = new System.Drawing.Point(12, 145);
-            this.comboBoxFuselages.Name = "comboBoxFuselages";
-            this.comboBoxFuselages.Size = new System.Drawing.Size(260, 21);
-            this.comboBoxFuselages.TabIndex = 1;
-            this.comboBoxFuselages.SelectedIndexChanged += new System.EventHandler(this.comboBoxFuselages_SelectedIndexChanged);
+            this.textBoxName.Depth = 0;
+            this.textBoxName.Hint = "Name";
+            this.textBoxName.Location = new System.Drawing.Point(12, 78);
+            this.textBoxName.MouseState = MaterialSkin.MouseState.HOVER;
+            this.textBoxName.Name = "textBoxName";
+            this.textBoxName.PasswordChar = '\0';
+            this.textBoxName.SelectedText = "";
+            this.textBoxName.SelectionLength = 0;
+            this.textBoxName.SelectionStart = 0;
+            this.textBoxName.Size = new System.Drawing.Size(260, 23);
+            this.textBoxName.TabIndex = 0;
+            this.textBoxName.UseSystemPasswordChar = false;
             // 
             // buttonAddProject
             // 
             this.buttonAddProject.Depth = 0;
-            this.buttonAddProject.Location = new System.Drawing.Point(12, 212);
+            this.buttonAddProject.Location = new System.Drawing.Point(12, 145);
             this.buttonAddProject.MouseState = MaterialSkin.MouseState.HOVER;
             this.buttonAddProject.Name = "buttonAddProject";
             this.buttonAddProject.Primary = true;
             this.buttonAddProject.Size = new System.Drawing.Size(260, 36);
-            this.buttonAddProject.TabIndex = 2;
+            this.buttonAddProject.TabIndex = 1;
             this.buttonAddProject.Text = "Add Project";
             this.buttonAddProject.UseVisualStyleBackColor = true;
             this.buttonAddProject.Click += new System.EventHandler(this.buttonAddProject_Click);
@@ -107,10 +95,9 @@ namespace BLAAutomation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(287, 273);
+            this.ClientSize = new System.Drawing.Size(283, 195);
             this.Controls.Add(this.buttonAddProject);
-            this.Controls.Add(this.comboBoxFuselages);
-            this.Controls.Add(this.textBoxProjectName);
+            this.Controls.Add(this.textBoxName);
             this.Name = "NewProject";
             this.Text = "New Project";
             this.Load += new System.EventHandler(this.NewProject_Load);
@@ -118,13 +105,7 @@ namespace BLAAutomation
 
         }
 
-        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxProjectName;
-        private System.Windows.Forms.ComboBox comboBoxFuselages;
+        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxName;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddProject;
-
-        private void comboBoxFuselages_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

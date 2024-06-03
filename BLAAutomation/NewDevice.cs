@@ -24,22 +24,15 @@ namespace BLAAutomation
         {
             try
             {
-                Console.WriteLine("Loading NewDevice");
-
                 // Инициализация значений по умолчанию для текстовых полей
                 textBoxName.Text = "Device1";
-                textBoxWeight.Text = "5";
-                textBoxNoiseImmunity.Text = "10";
 
                 // Настройка обработчиков событий для элементов управления
                 buttonAddDevice.Click += buttonAddDevice_Click;
-
-                Console.WriteLine("NewDevice loaded successfully");
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при загрузке данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -50,21 +43,11 @@ namespace BLAAutomation
                 using (var connection = new SQLiteConnection(_connectionString))
                 {
                     connection.Open();
-
                     string name = textBoxName.Text;
-                    if (!double.TryParse(textBoxWeight.Text, out double weight) || weight <= 0)
-                    {
-                        MessageBox.Show("Неверное значение веса. Введите положительное число.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    if (!double.TryParse(textBoxNoiseImmunity.Text, out double noiseImmunity) || noiseImmunity < 0)
-                    {
-                        MessageBox.Show("Неверное значение помехоустойчивости. Введите неотрицательное число.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    Device.AddDevice(connection, name, weight, noiseImmunity);
+                    double power = 500.0;
+                    double weight = 40.0;
+                    double noiseImmunity = 300.0;
+                    Device.AddDevice(connection, name, power, weight, noiseImmunity);
                     MessageBox.Show("Устройство успешно добавлено!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.DialogResult = DialogResult.OK;
                     this.Close();
@@ -79,8 +62,6 @@ namespace BLAAutomation
         private void InitializeComponent()
         {
             this.textBoxName = new MaterialSkin.Controls.MaterialSingleLineTextField();
-            this.textBoxWeight = new MaterialSkin.Controls.MaterialSingleLineTextField();
-            this.textBoxNoiseImmunity = new MaterialSkin.Controls.MaterialSingleLineTextField();
             this.buttonAddDevice = new MaterialSkin.Controls.MaterialRaisedButton();
             this.SuspendLayout();
             // 
@@ -99,45 +80,15 @@ namespace BLAAutomation
             this.textBoxName.TabIndex = 0;
             this.textBoxName.UseSystemPasswordChar = false;
             // 
-            // textBoxWeight
-            // 
-            this.textBoxWeight.Depth = 0;
-            this.textBoxWeight.Hint = "Weight";
-            this.textBoxWeight.Location = new System.Drawing.Point(12, 145);
-            this.textBoxWeight.MouseState = MaterialSkin.MouseState.HOVER;
-            this.textBoxWeight.Name = "textBoxWeight";
-            this.textBoxWeight.PasswordChar = '\0';
-            this.textBoxWeight.SelectedText = "";
-            this.textBoxWeight.SelectionLength = 0;
-            this.textBoxWeight.SelectionStart = 0;
-            this.textBoxWeight.Size = new System.Drawing.Size(260, 23);
-            this.textBoxWeight.TabIndex = 1;
-            this.textBoxWeight.UseSystemPasswordChar = false;
-            // 
-            // textBoxNoiseImmunity
-            // 
-            this.textBoxNoiseImmunity.Depth = 0;
-            this.textBoxNoiseImmunity.Hint = "Noise Immunity";
-            this.textBoxNoiseImmunity.Location = new System.Drawing.Point(12, 212);
-            this.textBoxNoiseImmunity.MouseState = MaterialSkin.MouseState.HOVER;
-            this.textBoxNoiseImmunity.Name = "textBoxNoiseImmunity";
-            this.textBoxNoiseImmunity.PasswordChar = '\0';
-            this.textBoxNoiseImmunity.SelectedText = "";
-            this.textBoxNoiseImmunity.SelectionLength = 0;
-            this.textBoxNoiseImmunity.SelectionStart = 0;
-            this.textBoxNoiseImmunity.Size = new System.Drawing.Size(260, 23);
-            this.textBoxNoiseImmunity.TabIndex = 2;
-            this.textBoxNoiseImmunity.UseSystemPasswordChar = false;
-            // 
             // buttonAddDevice
             // 
             this.buttonAddDevice.Depth = 0;
-            this.buttonAddDevice.Location = new System.Drawing.Point(12, 279);
+            this.buttonAddDevice.Location = new System.Drawing.Point(12, 145);
             this.buttonAddDevice.MouseState = MaterialSkin.MouseState.HOVER;
             this.buttonAddDevice.Name = "buttonAddDevice";
             this.buttonAddDevice.Primary = true;
             this.buttonAddDevice.Size = new System.Drawing.Size(260, 36);
-            this.buttonAddDevice.TabIndex = 3;
+            this.buttonAddDevice.TabIndex = 1;
             this.buttonAddDevice.Text = "Add Device";
             this.buttonAddDevice.UseVisualStyleBackColor = true;
             this.buttonAddDevice.Click += new System.EventHandler(this.buttonAddDevice_Click);
@@ -146,10 +97,8 @@ namespace BLAAutomation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 364);
+            this.ClientSize = new System.Drawing.Size(283, 195);
             this.Controls.Add(this.buttonAddDevice);
-            this.Controls.Add(this.textBoxNoiseImmunity);
-            this.Controls.Add(this.textBoxWeight);
             this.Controls.Add(this.textBoxName);
             this.Name = "NewDevice";
             this.Text = "New Device";
@@ -159,10 +108,6 @@ namespace BLAAutomation
         }
 
         private MaterialSkin.Controls.MaterialSingleLineTextField textBoxName;
-        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxWeight;
-        private MaterialSkin.Controls.MaterialSingleLineTextField textBoxNoiseImmunity;
         private MaterialSkin.Controls.MaterialRaisedButton buttonAddDevice;
-
-        
     }
 }
