@@ -1,53 +1,40 @@
 ﻿using System;
-using System.Data;
 using System.Data.SQLite;
+using System.Data;
 
 namespace BLAAutomation
 {
     public class AntennaInFuselage
     {
-        internal Antenna Antenna { get; set; }
-        internal double CoordinateX { get; set; }
-        internal double CoordinateY { get; set; }
-        internal double CoordinateZ { get; set; }
+        public int Id { get; set; }
+        public int AntennaId { get; set; }
+        public int FuselageId { get; set; }
+        public double CoordinateX { get; set; }
+        public double CoordinateY { get; set; }
+        public double CoordinateZ { get; set; }
 
-        public AntennaInFuselage(int idAntenna, double coordinateX, double coordinateY, double coordinateZ, SQLiteConnection connection)
+        public AntennaInFuselage(int id, SQLiteConnection connection)
         {
-            Antenna = new Antenna(idAntenna, connection);
-            CoordinateX = coordinateX;
-            CoordinateY = coordinateY;
-            CoordinateZ = coordinateZ;
+            var dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "AntennaInFuselage", "Id = " + id);
+            var row = dataSetObject.Tables[0].Rows[0];
+            Id = id;
+            AntennaId = int.Parse(row["AntennaId"].ToString());
+            FuselageId = int.Parse(row["FuselageId"].ToString());
+            CoordinateX = double.Parse(row["CoordinateX"].ToString());
+            CoordinateY = double.Parse(row["CoordinateY"].ToString());
+            CoordinateZ = double.Parse(row["CoordinateZ"].ToString());
         }
 
-        public static AntennaInFuselage[] GetAntennasForFuselage(SQLiteConnection connection, int idFuselage)
+        public static void AddAntennaToFuselage(SQLiteConnection connection, int antennaId, int fuselageId, double coordinateX, double coordinateY, double coordinateZ)
         {
-            DataSet dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "AntennaInFuselage", "Id_Fuselage = " + idFuselage.ToString() + ";");
-            AntennaInFuselage[] antennasInFuselage = new AntennaInFuselage[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
-            {
-                DataRow row = dataSetObjects.Tables[0].Rows[i];
-                antennasInFuselage[i] = new AntennaInFuselage(
-                    int.Parse(row["Id_Antenna"].ToString()),
-                    double.Parse(row["CoordinateX"].ToString()),
-                    double.Parse(row["CoordinateY"].ToString()),
-                    double.Parse(row["CoordinateZ"].ToString()),
-                    connection
-                );
-            }
-            return antennasInFuselage;
-        }
-
-        public static void AddAntennaToFuselage(SQLiteConnection connection, int idFuselage, int idAntenna, double coordinateX, double coordinateY, double coordinateZ)
-        {
-            string[] columns = { "Id_Antenna", "Id_Fuselage", "CoordinateX", "CoordinateY", "CoordinateZ" };
-            string[] values = { idAntenna.ToString(), idFuselage.ToString(), coordinateX.ToString(), coordinateY.ToString(), coordinateZ.ToString() };
+            string[] columns = { "AntennaId", "FuselageId", "CoordinateX", "CoordinateY", "CoordinateZ" };
+            string[] values = { antennaId.ToString(), fuselageId.ToString(), coordinateX.ToString(), coordinateY.ToString(), coordinateZ.ToString() };
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "AntennaInFuselage", columns, values);
         }
 
-        public static void RemoveAntennaFromFuselage(SQLiteConnection connection, int idFuselage, int idAntenna)
+        public static void RemoveAntennaFromFuselage(SQLiteConnection connection, int id)
         {
-            string whereClause = $"WHERE Id_Fuselage = {idFuselage} AND Id_Antenna = {idAntenna}";
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "AntennaInFuselage", whereClause);
+            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "AntennaInFuselage", $"WHERE Id = {id}");
         }
     }
 }

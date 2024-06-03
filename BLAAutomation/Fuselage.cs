@@ -1,90 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
+using System.Data;
 
 namespace BLAAutomation
 {
-    public class Fuselage : BasicObject
+    public class Fuselage
     {
-        public AntennaInFuselage[] AntennasForFuselage { get; private set; }
-        public Compartment[] CompartmentsForFuselage { get; private set; }
-        public Position[] PositionsForFuselage { get; private set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public double Length { get; set; }
+        public double Weight { get; set; }
 
-        public double[,] Distances { get; private set; }
-        public double[,] E { get; private set; }
-
-        public Fuselage(int id, SQLiteConnection connection) : base(id)
+        public Fuselage(int id, SQLiteConnection connection)
         {
-            var dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Fuselage", "Id = " + id + ";");
-            Name = dataSetObject.Tables[0].Rows[0]["Name"].ToString();
-            AntennasForFuselage = AntennaInFuselage.GetAntennasForFuselage(connection, id);
-            CompartmentsForFuselage = Compartment.GetCompartmentsForFuselage(connection, id).ToArray();
-            PositionsForFuselage = Position.GetPositionsForFuselage(connection, id).ToArray();
-
-            CalculateDistancesAndFields();
+            var dataSetObject = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Fuselage", "Id = " + id);
+            var row = dataSetObject.Tables[0].Rows[0];
+            Id = id;
+            Name = row["Name"].ToString();
+            Length = double.Parse(row["Length"].ToString());
+            Weight = double.Parse(row["Weight"].ToString());
         }
 
-        private void CalculateDistancesAndFields()
+        public static List<Fuselage> GetAllFuselages(SQLiteConnection connection)
         {
-            const double c = 299792458.0;
-            const double eps = 1.0;
-
-            Distances = new double[AntennasForFuselage.Length, CompartmentsForFuselage.Length];
-            E = new double[AntennasForFuselage.Length, CompartmentsForFuselage.Length];
-
-            for (int i = 0; i < AntennasForFuselage.Length; i++)
-            {
-                var ant = AntennasForFuselage[i];
-                for (int j = 0; j < CompartmentsForFuselage.Length; j++)
-                {
-                    var cmp = CompartmentsForFuselage[j];
-                    Distances[i, j] = Math.Sqrt(Math.Pow(cmp.CoordinateX - ant.CoordinateX, 2) +
-                                                Math.Pow(cmp.CoordinateY - ant.CoordinateY, 2) +
-                                                Math.Pow(cmp.CoordinateZ - ant.CoordinateZ, 2));
-                    double toCheck = c / (2.0 * Math.PI * ant.Antenna.Frequency);
-                    if (Distances[i, j] < toCheck)
-                    {
-                        E[i, j] = (ant.Antenna.Amperage * ant.Antenna.Length) / (4.0 * Math.PI * Math.PI * eps * ant.Antenna.Frequency * Math.Pow(Distances[i, j], 2));
-                    }
-                    else
-                    {
-                        E[i, j] = Math.Sqrt(30.0 * ant.Antenna.Power) / Distances[i, j];
-                    }
-                }
-            }
-
-            foreach (var cmp in CompartmentsForFuselage)
-            {
-                cmp.E = AntennasForFuselage.Sum(ant => E[Array.IndexOf(AntennasForFuselage, ant), Array.IndexOf(CompartmentsForFuselage, cmp)]);
-            }
-        }
-
-        public static Fuselage[] GetFuselages(SQLiteConnection connection)
-        {
+            var fuselages = new List<Fuselage>();
             var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Fuselage");
-            var fuselages = new Fuselage[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
+
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
             {
-                fuselages[i] = new Fuselage(int.Parse(dataSetObjects.Tables[0].Rows[i]["Id"].ToString()), connection);
+                fuselages.Add(new Fuselage(int.Parse(row["Id"].ToString()), connection));
             }
+
             return fuselages;
         }
 
-        public static void AddFuselage(SQLiteConnection connection, string name)
+        public static void AddFuselage(SQLiteConnection connection, string name, double length, double weight)
         {
-            string[] columns = { "Name" };
-            string[] values = { name };
+            string[] columns = { "Name", "Length", "Weight" };
+            string[] values = { name, length.ToString(), weight.ToString() };
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Fuselage", columns, values);
         }
 
-        public static void RemoveFuselage(SQLiteConnection connection, int idFuselage)
+        public static void RemoveFuselage(SQLiteConnection connection, int id)
         {
-            string whereClause = $"WHERE Id = {idFuselage}";
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "Fuselage", whereClause);
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "CompartmentsInFuselage", $"WHERE Id_Fuselage = {idFuselage}");
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "AntennaInFuselage", $"WHERE Id_Fuselage = {idFuselage}");
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "PositionsForPlacement", $"WHERE Id_Fuselage = {idFuselage}");
+            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "Fuselage", $"WHERE Id = {id}");
         }
     }
 }

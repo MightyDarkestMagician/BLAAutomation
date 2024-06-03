@@ -1,9 +1,7 @@
-﻿// Project.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Data;
-using System.Linq;
 
 namespace BLAAutomation
 {
@@ -11,24 +9,23 @@ namespace BLAAutomation
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int FuselageId { get; set; }
         public List<Compartment> Compartments { get; set; }
         public List<Position> Positions { get; set; }
         public List<AntennaPosition> Antennas { get; set; }
-        public List<Device> Devices { get; set; } // Add Devices to Project
-        public List<Fuselage> Fuselages { get; set; } // Add Fuselages to Project
+        public List<Device> Devices { get; set; }
 
         public Project()
         {
             Compartments = new List<Compartment>();
             Positions = new List<Position>();
             Antennas = new List<AntennaPosition>();
-            Devices = new List<Device>(); // Initialize Devices
-            Fuselages = new List<Fuselage>(); // Initialize Fuselages
+            Devices = new List<Device>();
         }
 
         public static void AddProject(SQLiteConnection connection, string name, int fuselageId)
         {
-            string[] columns = { "Name", "Id_Fuselage" };
+            string[] columns = { "Name", "FuselageId" };
             string[] values = { name, fuselageId.ToString() };
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Project", columns, values);
         }
@@ -43,15 +40,14 @@ namespace BLAAutomation
                 var project = new Project
                 {
                     Id = int.Parse(row["Id"].ToString()),
-                    Name = row["Name"].ToString()
+                    Name = row["Name"].ToString(),
+                    FuselageId = int.Parse(row["FuselageId"].ToString())
                 };
 
-                // Загрузка отсеков, позиций, антенн, устройств и фюзеляжей для проекта
                 project.Compartments = Compartment.GetCompartmentsForProject(connection, project.Id);
                 project.Positions = Position.GetPositionsForProject(connection, project.Id);
                 project.Antennas = AntennaPosition.GetAntennasForProject(connection, project.Id);
-                project.Devices = Device.GetDevicesForProject(connection, project.Id).ToList(); // Load devices
-                project.Fuselages = Fuselage.GetFuselages(connection).ToList(); // Load fuselages
+                project.Devices = Device.GetDevicesForProject(connection, project.Id);
 
                 projects.Add(project);
             }

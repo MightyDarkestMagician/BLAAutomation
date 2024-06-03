@@ -7,12 +7,15 @@ namespace BLAAutomation
 {
     public static class SQLiteDatabaseHelper
     {
-        // Изменяем путь к базе данных на относительно проекта
         private static string _databasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\..\\App_Data", "blaautomation.db");
 
         public static SQLiteConnection ConnectToDatabase()
         {
-            return new SQLiteConnection(GetConnectionString());
+            SQLitePCL.Batteries.Init();
+            string connectionString = $"Data Source={_databasePath};Version=3;";
+            SQLiteConnection conn = new SQLiteConnection(connectionString);
+            conn.Open();
+            return conn;
         }
 
         public static string GetConnectionString()
@@ -20,94 +23,60 @@ namespace BLAAutomation
             return $"Data Source={_databasePath};Version=3;";
         }
 
-        public static DataSet SQLiteCommandSelectAllFrom(SQLiteConnection sqliteConn, string TableName)
+        public static DataSet SQLiteCommandSelectAllFrom(SQLiteConnection sqliteConn, string tableName)
         {
-            try
+            if (sqliteConn.State == ConnectionState.Closed || sqliteConn.State == ConnectionState.Broken)
             {
-                if (sqliteConn.State == ConnectionState.Closed || sqliteConn.State == ConnectionState.Broken)
-                {
-                    Console.WriteLine("Opening SQLite connection...");
-                    sqliteConn.Open();
-                }
+                sqliteConn.Open();
+            }
 
-                Console.WriteLine($"Executing SELECT * FROM {TableName}");
-                DataSet dataSet = new DataSet();
-                string SqlCommand = "SELECT * FROM " + TableName;
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(SqlCommand, sqliteConn);
-                adapter.Fill(dataSet);
-                return dataSet;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in SQLiteCommandSelectAllFrom: {ex.Message}");
-                throw;
-            }
-            finally
-            {
-                if (sqliteConn.State == ConnectionState.Open)
-                {
-                    Console.WriteLine("Closing SQLite connection...");
-                    sqliteConn.Close();
-                }
-            }
-        }
-
-        public static DataSet SQLiteCustomCommandSelect(SQLiteConnection sqliteConn, string query)
-        {
-            sqliteConn.Open();
             DataSet dataSet = new DataSet();
-            SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, sqliteConn);
+            string sqlCommand = "SELECT * FROM " + tableName;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlCommand, sqliteConn);
             adapter.Fill(dataSet);
             sqliteConn.Close();
             return dataSet;
         }
 
-        public static DataSet SQLiteCommandSelectWithCustomCondition(SQLiteConnection sqliteConn, string TableName, string Condition)
+        public static DataSet SQLiteCommandSelectWithCustomCondition(SQLiteConnection sqliteConn, string tableName, string condition)
         {
-            sqliteConn.Open();
+            if (sqliteConn.State == ConnectionState.Closed || sqliteConn.State == ConnectionState.Broken)
+            {
+                sqliteConn.Open();
+            }
+
             DataSet dataSet = new DataSet();
-            string SqlCommand = "SELECT * FROM " + TableName + " WHERE " + Condition;
-            SQLiteDataAdapter adapter = new SQLiteDataAdapter(SqlCommand, sqliteConn);
+            string sqlCommand = $"SELECT * FROM {tableName} WHERE {condition}";
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlCommand, sqliteConn);
             adapter.Fill(dataSet);
             sqliteConn.Close();
             return dataSet;
         }
 
-        public static void SQLiteCommandInsertInto(SQLiteConnection sqliteConn, string TableName, string[] ColumnsName, string[] ColumnsValue)
+        public static void SQLiteCommandInsertInto(SQLiteConnection sqliteConn, string tableName, string[] columnsName, string[] columnsValue)
         {
-            sqliteConn.Open();
-            string SqlCommand = "INSERT INTO " + TableName + " (";
-            SqlCommand += string.Join(", ", ColumnsName) + ") VALUES ('";
-            SqlCommand += string.Join("', '", ColumnsValue) + "')";
-            SQLiteCommand command = new SQLiteCommand(SqlCommand, sqliteConn);
-            command.ExecuteNonQuery();
-            sqliteConn.Close();
-        }
-
-        public static void SQLiteCommandDeleteFrom(SQLiteConnection sqliteConn, string TableName, string Where)
-        {
-            sqliteConn.Open();
-            string SqlCommand = "DELETE FROM " + TableName + " " + Where;
-            SQLiteCommand command = new SQLiteCommand(SqlCommand, sqliteConn);
-            command.ExecuteNonQuery();
-            sqliteConn.Close();
-        }
-
-        public static int GetLastId(SQLiteConnection sqliteConn, string TableName)
-        {
-            sqliteConn.Open();
-            int id = 0;
-            string SqlCommand = "SELECT MAX(Id) FROM " + TableName + ";";
-            using (var command = new SQLiteCommand(SqlCommand, sqliteConn))
+            if (sqliteConn.State == ConnectionState.Closed || sqliteConn.State == ConnectionState.Broken)
             {
-                object result = command.ExecuteScalar();
-                if (result != DBNull.Value && result != null)
-                {
-                    id = Convert.ToInt32(result);
-                }
+                sqliteConn.Open();
             }
+
+            string sqlCommand = $"INSERT INTO {tableName} ({string.Join(", ", columnsName)}) VALUES ('{string.Join("', '", columnsValue)}')";
+            SQLiteCommand command = new SQLiteCommand(sqlCommand, sqliteConn);
+            command.ExecuteNonQuery();
             sqliteConn.Close();
-            return id;
+        }
+
+        public static void SQLiteCommandDeleteFrom(SQLiteConnection sqliteConn, string tableName, string where)
+        {
+            if (sqliteConn.State == ConnectionState.Closed || sqliteConn.State == ConnectionState.Broken)
+            {
+                sqliteConn.Open();
+            }
+
+            string sqlCommand = $"DELETE FROM {tableName} {where}";
+            SQLiteCommand command = new SQLiteCommand(sqlCommand, sqliteConn);
+            command.ExecuteNonQuery();
+            sqliteConn.Close();
         }
     }
 }

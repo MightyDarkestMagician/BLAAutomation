@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Data;
 
 namespace BLAAutomation
 {
@@ -8,6 +9,7 @@ namespace BLAAutomation
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public double Power { get; set; }
         public double Weight { get; set; }
         public double NoiseImmunity { get; set; }
 
@@ -17,44 +19,34 @@ namespace BLAAutomation
             var row = dataSetObject.Tables[0].Rows[0];
             Id = id;
             Name = row["Name"].ToString();
+            Power = double.Parse(row["Power"].ToString());
             Weight = double.Parse(row["Weight"].ToString());
             NoiseImmunity = double.Parse(row["NoiseImmunity"].ToString());
         }
 
-        public static Device[] GetDevicesForProject(SQLiteConnection connection, int projectId)
+        public static List<Device> GetDevicesForProject(SQLiteConnection connection, int projectId)
         {
-            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "DevicesForPlacement", "Id_Project = " + projectId);
-            var devices = new Device[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
+            var devices = new List<Device>();
+            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectWithCustomCondition(connection, "Device", $"ProjectId = {projectId}");
+
+            foreach (DataRow row in dataSetObjects.Tables[0].Rows)
             {
-                var row = dataSetObjects.Tables[0].Rows[i];
-                devices[i] = new Device(int.Parse(row["Id_Device"].ToString()), connection);
+                devices.Add(new Device(int.Parse(row["Id"].ToString()), connection));
             }
+
             return devices;
         }
 
-        public static Device[] GetAllDevices(SQLiteConnection connection)
+        public static void AddDevice(SQLiteConnection connection, string name, double power, double weight, double noiseImmunity)
         {
-            var dataSetObjects = SQLiteDatabaseHelper.SQLiteCommandSelectAllFrom(connection, "Device");
-            var devices = new Device[dataSetObjects.Tables[0].Rows.Count];
-            for (int i = 0; i < dataSetObjects.Tables[0].Rows.Count; i++)
-            {
-                devices[i] = new Device(int.Parse(dataSetObjects.Tables[0].Rows[i]["Id"].ToString()), connection);
-            }
-            return devices;
-        }
-
-        public static void AddDevice(SQLiteConnection connection, string name, double weight, double noiseImmunity)
-        {
-            string[] columns = { "Name", "Weight", "NoiseImmunity" };
-            string[] values = { name, weight.ToString(), noiseImmunity.ToString() };
+            string[] columns = { "Name", "Power", "Weight", "NoiseImmunity" };
+            string[] values = { name, power.ToString(), weight.ToString(), noiseImmunity.ToString() };
             SQLiteDatabaseHelper.SQLiteCommandInsertInto(connection, "Device", columns, values);
         }
 
-        public static void RemoveDevice(SQLiteConnection connection, int deviceId)
+        public static void RemoveDevice(SQLiteConnection connection, int id)
         {
-            string whereClause = $"WHERE Id = {deviceId}";
-            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "Device", whereClause);
+            SQLiteDatabaseHelper.SQLiteCommandDeleteFrom(connection, "Device", $"WHERE Id = {id}");
         }
     }
 }

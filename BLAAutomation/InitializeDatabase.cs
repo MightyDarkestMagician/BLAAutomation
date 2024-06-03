@@ -1,6 +1,6 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Data.SQLite;
 using System.IO;
-using System;
 
 public class DatabaseInitializer
 {
@@ -22,58 +22,80 @@ public class DatabaseInitializer
 
             string[] tableCreationQueries = {
                 @"
-                CREATE TABLE IF NOT EXISTS Fuselage (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Name TEXT NOT NULL
-                );",
-                @"
                 CREATE TABLE IF NOT EXISTS Project (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProjectId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ProjectName TEXT NOT NULL,
+                    FuselageModel TEXT NOT NULL,
+                    FOREIGN KEY (FuselageModel) REFERENCES Fuselage(FuselageModel)
+                );",
+                @"
+                CREATE TABLE IF NOT EXISTS Fuselage (
+                    FuselageModel TEXT PRIMARY KEY,
                     Name TEXT NOT NULL,
-                    Id_Fuselage INTEGER,
-                    FOREIGN KEY (Id_Fuselage) REFERENCES Fuselage(Id)
+                    TotalCompartments INTEGER,
+                    Weight INTEGER
                 );",
                 @"
-                CREATE TABLE IF NOT EXISTS Projects (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Name TEXT NOT NULL
+                CREATE TABLE IF NOT EXISTS Compartment (
+                    CompartmentId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    FuselageModel TEXT NOT NULL,
+                    CoordinateX INTEGER,
+                    CoordinateY INTEGER,
+                    CoordinateZ INTEGER,
+                    Carrying INTEGER,
+                    Length INTEGER,
+                    Width INTEGER,
+                    Height INTEGER,
+                    FOREIGN KEY (FuselageModel) REFERENCES Fuselage(FuselageModel)
                 );",
                 @"
-                CREATE TABLE IF NOT EXISTS CompartmentsInFuselage (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Id_Fuselage INTEGER NOT NULL,
-                    CoordinateX FLOAT,
-                    CoordinateY FLOAT,
-                    CoordinateZ FLOAT,
-                    Length FLOAT,
-                    Width FLOAT,
-                    Height FLOAT,
-                    Carrying FLOAT,
-                    FOREIGN KEY (Id_Fuselage) REFERENCES Fuselage(Id)
+                CREATE TABLE IF NOT EXISTS Device (
+                    DeviceModel TEXT PRIMARY KEY,
+                    Power INTEGER,
+                    NoiseImmunity INTEGER,
+                    Weight INTEGER
+                );",
+                @"
+                CREATE TABLE IF NOT EXISTS EquipmentPlacement (
+                    PlacementId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    DeviceModel TEXT NOT NULL,
+                    CompartmentId INTEGER NOT NULL,
+                    Description TEXT,
+                    CreationDate DATE,
+                    FuselageModel TEXT NOT NULL,
+                    FOREIGN KEY (DeviceModel) REFERENCES Device(DeviceModel),
+                    FOREIGN KEY (CompartmentId) REFERENCES Compartment(CompartmentId),
+                    FOREIGN KEY (FuselageModel) REFERENCES Fuselage(FuselageModel)
+                );",
+                @"
+                CREATE TABLE IF NOT EXISTS Antenna (
+                    AntennaId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    FrequencyRange INTEGER,
+                    Gain INTEGER,
+                    Power INTEGER,
+                    Impedance INTEGER
                 );",
                 @"
                 CREATE TABLE IF NOT EXISTS AntennaInFuselage (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Id_Fuselage INTEGER NOT NULL,
-                    CoordinateX FLOAT,
-                    CoordinateY FLOAT,
-                    CoordinateZ FLOAT,
-                    Amperage FLOAT,
-                    Length FLOAT,
-                    Frequency FLOAT,
-                    Power FLOAT,
-                    FOREIGN KEY (Id_Fuselage) REFERENCES Fuselage(Id)
+                    AntennaId INTEGER NOT NULL,
+                    FuselageModel TEXT NOT NULL,
+                    AntennaModel TEXT,
+                    Name TEXT,
+                    CoordinateX INTEGER,
+                    CoordinateY INTEGER,
+                    CoordinateZ INTEGER,
+                    PRIMARY KEY (AntennaId, FuselageModel),
+                    FOREIGN KEY (FuselageModel) REFERENCES Fuselage(FuselageModel)
                 );",
                 @"
-                CREATE TABLE IF NOT EXISTS PositionsForPlacement (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Id_Fuselage INTEGER NOT NULL,
-                    CoordinateX FLOAT,
-                    CoordinateY FLOAT,
-                    CoordinateZ FLOAT,
-                    CompartmentId INTEGER,
-                    FOREIGN KEY (Id_Fuselage) REFERENCES Fuselage(Id),
-                    FOREIGN KEY (CompartmentId) REFERENCES CompartmentsInFuselage(Id)
+                CREATE TABLE IF NOT EXISTS PlacementPosition (
+                    PositionId INTEGER PRIMARY KEY AUTOINCREMENT,
+                    FuselageModel TEXT NOT NULL,
+                    CoordinateX INTEGER,
+                    CoordinateY INTEGER,
+                    CoordinateZ INTEGER,
+                    WeightLimit INTEGER,
+                    FOREIGN KEY (FuselageModel) REFERENCES Fuselage(FuselageModel)
                 );"
             };
 
